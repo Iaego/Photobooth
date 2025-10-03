@@ -4,20 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8  offset-lg-2">
-
-                
-                <h2 class="mt-5">CAMERA APP by Hemanth Nag</h2>
-
-                <img src="{{ url_for('cam_feed') }}" height="80%">
-                <h3 style="font-family:courier;">Instructions:</h3>
-
-            </div>
+    <div class="navbar">
+        <h1>Litratista</h1>
+    </div>
+    <div class="home">
+        <div class="hero">
+            <h1>Start Snapping</h1>
+        </div>
+        <div class="main-frame">
+            <img src="{{ url_for('cam_feed') }}" height="80%">
+        </div>
+        <div class="button-group">
+            <form method="POST" action=" {{url_for('filters')}}">
+                <button class="button" input="submit" value="BNW" name="bnw">Black and White</button>
+                <button class="button" input="submit" value="Capture" name="capture">Capture</button>
+                <button class="button">Filter 2</button>
+            </form>
         </div>
     </div>
+
+
 </body>
 </html>

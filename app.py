@@ -2,7 +2,8 @@ from flask import Flask, request, render_template, Response
 import cv2, datetime, os
 
 
-global capture
+global capture, bnw
+bnw = 0
 capture = 0
 
 app = Flask(__name__)
@@ -17,19 +18,38 @@ def index():
 def cam_feed():
     return Response(live_cam(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route("/filters", methods=["POST"])
+def filters():
+    if request.method == "POST":
+        if request.form.get('bnw') == "BNW":
+            global bnw
+            bnw = not bnw
+        if request.form.get('capture') == "Capture":
+            global capture
+            capture = not capture
+    else:
+        return render_template('index.html')
+
+    return render_template('index.html')
+
+
+
+
+
 def live_cam():
-    global capture
+    global capture, bnw
     while True:
-        ret, frame = cam.read()
-        # if not ret:
-        #     print("failed to grab frame")
-        #     break
+        ret, frame = cam.read(0)
         if ret:
-            # if(capture):
-            #     capture=0
-            #     now = datetime.datetime.now()
-            #     p = os.path.sep.join(['shots', "shot_{}.png".format(str(now).replace(":",''))])
-            #     cv2.imwrite(p, frame)
+            if(bnw):
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+            if(capture):
+                capture=0
+                now = datetime.datetime.now()
+                p = os.path.sep.join(['shots', "shot_{}.png".format(str(now).replace(":",''))])
+                img =cv2.imwrite(p, frame)
+                return "<h1>test</h1>"
         
             try:
                 ret, buffer = cv2.imencode('.jpg', cv2.flip(frame,1))
@@ -38,9 +58,10 @@ def live_cam():
                        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
             except Exception as e:
                 pass
-                
         else:
-            pass
+            print("failed to grab frame")
+            break
+
 
 
 if __name__ == '__main__':

@@ -33,7 +33,29 @@
     </div>
     </nav>
 
+<!-- Hero Page -->
+    <div class="hero d-flex justify-content-center align-items-center" style="height: 100vh;"> 
+        <h1>Gunita Studios</h1>
+    </div>
 
+<!-- Select a layout -->
+    <div class="layout container justify-content-center align-items-center g-4" style="height: auto;">
+        <div class="row">
+            <div class="hero text-center">
+                <h2>Select a Layout</h2>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="layout-frame text-center gap-4">
+                <img src="../media/layout-1.png" class="mx-5" alt="Layout 1" width="200" height="auto">
+                <img src="../media/layout-2.png" class="mx-5" alt="Layout 2" width="200" height="auto">
+                <img src="../media/layout-3.png" class="mx-5" alt="Layout 3" width="200" height="auto">
+            </div>
+        </div>
+    </div>
+
+
+<!-- Photobooth -->
     <div class="home container justify-content-center align-items-center g-4">
         <div class="row">
             <div class="hero text-center">
@@ -42,20 +64,54 @@
         </div>
         <div class="row align-items-center">
             <div class="main-frame text-center">
-                <img src="{{ url_for('cam_feed') }}" alt="no img" height="80%">
+                <video id="cameras" autoplay playsinline width="500" style="transform:  scaleX(-1);"></video>
+                <canvas id="canvas" style="display:none;"></canvas>         
             </div>
         </div>
         <div class="row mt-2">
             <div class="button-group text-center">
-                <form method="POST" action="{{url_for('filters')}}">
-                    <button class="button" input="submit" value="BNW" name="bnw">Black and White</button>
-                    <button class="button" input="submit" value="Capture" name="capture">Capture</button>
-                    <button class="button">Filter 2</button>
-                </form>
+                <button class="button" input="submit" onclick="takePicture()">Capture</button>
+                <button class="button">Filter 2</button>
             </div>
+        </div>
+        <div id="snapshot-container" class="row mt-4 text-center">
+            <h2>Snapshots</h2>
+
         </div>
     </div>
 
+    <!-- Script to turn on camera -->
+    <script>
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            const cam = document.getElementById("camera");
+            cam.srcObject = stream;
+        })
+        .catch(err => {
+            console.error("Camera error:", err);
+        });
+    </script>
+
+    <!-- Script to take picture -->
+    <script>
+        function takePicture() {
+            const video = document.getElementById("camera");
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            ctx.drawImage(video, 0, 0);
+            const imgData = canvas.toDataURL("image/png");
+
+            const img = document.createElement("img");
+            img.src = imgData;
+            img.width = 300;
+            document.getElementById("snapshot-container").appendChild(img);
+        }
+    </script>
 
 </body>
+
 </html>

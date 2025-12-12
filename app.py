@@ -27,11 +27,11 @@ def filters():
         if request.form.get('capture') == "Capture":
             global capture
             capture = not capture
+            return "<h1>test</h1>"
     else:
         return render_template('index.html')
 
     return render_template('index.html')
-
 
 
 
@@ -46,10 +46,7 @@ def live_cam():
 
             if(capture):
                 capture=0
-                now = datetime.datetime.now()
-                p = os.path.sep.join(['shots', "shot_{}.png".format(str(now).replace(":",''))])
-                img =cv2.imwrite(p, frame)
-                return "<h1>test</h1>"
+
         
             try:
                 ret, buffer = cv2.imencode('.jpg', cv2.flip(frame,1))

@@ -4,10 +4,19 @@
 body {
    margin: 0;
    padding: 0;
+    background-color: #f9c96e;
+}
+
+.layout{
+    background-color: #fff7d6;
+    width: 80%;
+    /* height: 80%; */
+    border-radius: 10px;
 }
 
 .photo-strip{
-    width: 15%;
+    width: 55%;
+    /* min-width: 200px; */
     height: auto;
     filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
     transition: transform 0.3s ease-in-out;
@@ -17,6 +26,7 @@ body {
     transform: scale(1.1);
     transition: transform 0.3s ease-in-out;
 }
+
 
 /* camera.html page */
 #camera {

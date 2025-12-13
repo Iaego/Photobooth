@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" href="../static/css/style.css">
 
     <!-- Bootstrap CSS-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -39,17 +39,17 @@
     </div>
 
 <!-- Select a layout -->
-    <div class="layout container justify-content-center align-items-center g-4" style="height: auto;">
+    <div class="layout container justify-content-center align-items-center" style="height: 100vh;">
         <div class="row">
-            <div class="hero text-center">
+            <div class="text-center my-3">
                 <h2>Select a Layout</h2>
             </div>
         </div>
         <div class="row align-items-center">
-            <div class="layout-frame text-center gap-4">
-                <img src="../media/layout-1.png" class="mx-5" alt="Layout 1" width="200" height="auto">
-                <img src="../media/layout-2.png" class="mx-5" alt="Layout 2" width="200" height="auto">
-                <img src="../media/layout-3.png" class="mx-5" alt="Layout 3" width="200" height="auto">
+            <div class="layout-frame text-center">
+                <img src="../media/layout-1.png" class="photo-strip mx-5" alt="Layout 1">
+                <img src="../media/layout-2.png" class="photo-strip mx-5" alt="Layout 2">
+                <img src="../media/layout-3.png" class="photo-strip mx-5" alt="Layout 3">
             </div>
         </div>
     </div>
@@ -111,6 +111,8 @@
             document.getElementById("snapshot-container").appendChild(img);
         }
     </script>
+
+    
 
 </body>
 

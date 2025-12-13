@@ -5,10 +5,38 @@ body {
    margin: 0;
    padding: 0;
 }
-#camera {
-    transform: scaleX(-1);
+
+.photo-strip{
+    width: 15%;
+    height: auto;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+    transition: transform 0.3s ease-in-out;
 }
 
-.layout-frame, img{
-    margin: 10px;
+.photo-strip:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* camera.html page */
+#camera {
+    transform: scaleX(-1);
+    width: 55vw;
+}
+
+.main-frame {
+    position: relative;
+}
+
+.ready-prompt {
+    width: 55vw;   
+    height: 100%; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    position: absolute;
+    z-index: 999;
+    color: white;
+        background-color: rgba(0, 0, 0, 0.5);
+
 }

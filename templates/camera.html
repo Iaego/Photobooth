@@ -33,7 +33,7 @@
 
 <!-- Select a layout -->
  <div class="main d-flex justify-content-center">
-    <div class="layout d-flex flex-column align-items-center py-5 mt-5">
+    <div class="layout d-flex flex-column align-items-center py-5 mt-5 px-4">
     <!-- Photobooth -->
           <div class="row">
               <div class="hero text-center">
@@ -43,7 +43,7 @@
           <div class="row align-items-center">
               <div class="main-frame text-center">
                   <div id="ready-prompt" class="ready-prompt d-flex justify-content-center align-items-center">Click CAPTURE when ready!</div>
-                  <video id="camera" autoplay playsinline></video>
+                  <video id="cameras" autoplay playsinline></video>
                   <canvas id="canvas" style="display:none;"></canvas>         
               </div>
           </div>
@@ -53,10 +53,34 @@
                   <button class="button">Filter 2</button>
               </div>
           </div>
-          <div id="snapshot-container" class="row mt-4 text-center">
-              <h2>Snapshots</h2>
-
+          <div class="row mt-4"><h2>Snapshots</h2></div>
+          <div class="edit-strip d-flex justify-content-center gap-4 mt-4">
+            <div id="snapshot-container" class="snapshot-strip d-flex flex-column align-items-center">
+                  <img src="../media/test-shot1.png" alt="">
+                  <img src="../media/test-shot2.png" alt="">
+                  <img src="../media/test-shot3.png" alt="">
+            </div>
+            <div class="select-edit">
+              <ul class="nav nav-tabs">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#">Active</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                </li>
+              </ul>
+              <div class="color-choice m-2">
+                <h1>Pick a Color</h1>
+              </div>
+            </div>
           </div>
+
     </div>
   </div>
     
@@ -108,7 +132,8 @@
 
               const img = document.createElement("img");
               img.src = imgData;
-              img.width = 300;
+              img.style.width = "90%";
+              img.style.marginBottom = "12px";
               img.style = "transform: scaleX(-1)"; // mirror the image
               document.getElementById("snapshot-container").appendChild(img);
             }

@@ -42,8 +42,10 @@
           </div>
           <div class="row align-items-center">
               <div class="main-frame text-center">
+                  <div id="flash"></div>
                   <div id="ready-prompt" class="ready-prompt d-flex justify-content-center align-items-center">Click CAPTURE when ready!</div>
-                  <video id="cameras" autoplay playsinline></video>
+                  <img id="preview" alt="Preview">
+                  <video id="camera" autoplay playsinline></video>
                   <canvas id="canvas" style="display:none;"></canvas>         
               </div>
           </div>
@@ -98,6 +100,32 @@
         });
     </script>
 
+    <!-- Script to set prompt text based on layout -->
+    <script>
+      window.addEventListener('load', () => {
+        const prompt = document.getElementById("ready-prompt");
+        const selectedLayout = sessionStorage.getItem("selectedLayout");
+        if(selectedLayout === "layout-1"){
+          prompt.innerHTML = "Get ready for 3 pictures!";
+        } else if(selectedLayout === "layout-2"){
+          prompt.innerHTML = "Get ready for 2 pictures!";
+        } else {
+          prompt.innerHTML = "Get ready for 4 pictures!"; 
+        }
+      });
+
+    </script>
+
+    <!-- Script to handle flash effect -->
+    <script>
+        function flash() {
+          const flash = document.getElementById("flash");
+          flash.classList.remove("flash"); // reset
+          void flash.offsetWidth;          // reflow (tells the browser to run/apple ALL the CSS changes IMMEDIATELY)
+          flash.classList.add("flash");
+        }
+    </script>
+
     <!-- Script to take picture -->
     <script>
         async function takePicture() {
@@ -105,31 +133,49 @@
             var countPic = 0;
             const selectedLayout = sessionStorage.getItem("selectedLayout");
             if(selectedLayout === "layout-1"){
-              prompt.innerHTML = "Get ready for 3 pictures!";
               countPic = 3;
             } else if(selectedLayout === "layout-2"){
-              prompt.innerHTML = "Get ready for 2 pictures!";
               countPic = 2;
             } else {
-              prompt.innerHTML = "Get ready for 4 pictures!"; 
               countPic = 4; 
             }
             for(let j = countPic; j > 0; j--){
+              prompt.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
               for(let i = 3; i > 0; i--){
                 prompt.innerHTML = i;
                 await new Promise(resolve => setTimeout(resolve, 1000));
+                if(i == 1){
+                  prompt.innerHTML = "";
+                  prompt.style.backgroundColor = "rgba(0, 0, 0, 0)";
+                  await new Promise(resolve => setTimeout(resolve, 1000));
+                }
               }
-
+              
+              const preview = document.getElementById("preview");
               const video = document.getElementById("camera");
               const canvas = document.getElementById("canvas");
               const ctx = canvas.getContext("2d");
-
               canvas.width = video.videoWidth;
               canvas.height = video.videoHeight;
-              
+
+              flash(); // Trigger flash effect
+
+              // Slight delay so flash happens before capture
+              await new Promise(resolve => setTimeout(resolve, 80));
+
               ctx.drawImage(video, 0, 0);
               const imgData = canvas.toDataURL("image/png");
 
+              /* Show preview of image */
+              preview.src = imgData;
+              preview.style.display = "block";
+
+              /* Keep preview visible */
+              await new Promise(r => setTimeout(r, 1200));
+
+              /* Hide preview before next shot */
+              preview.style.display = "none";
+              
               const img = document.createElement("img");
               img.src = imgData;
               img.style.width = "90%";
@@ -137,7 +183,6 @@
               img.style = "transform: scaleX(-1)"; // mirror the image
               document.getElementById("snapshot-container").appendChild(img);
             }
-
         }
     </script>
 

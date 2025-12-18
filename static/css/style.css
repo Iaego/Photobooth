@@ -32,13 +32,24 @@ body {
 /* camera.html page */
 #camera {
     transform: scaleX(-1);
-    width: 55vw;
+    width: 100%;
+    object-fit: cover;
 }
-
+#camera.portrait{
+    height: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    transform: scaleX(-1);
+}
 .main-frame {
     position: relative;
     width: 55vw;
+    aspect-ratio: 16/9;
 }
+.main-frame.portrait{
+    aspect-ratio: 2/3;
+}
+
 #flash {
     position: absolute;
     top: 0;
@@ -69,11 +80,15 @@ body {
     transform: scaleX(-1);
     display: none;
     z-index: 15;
+    object-fit: cover;
+}
+#preview.portrait{
+    aspect-ratio: 2/3;
+    object-fit: cover;
 }
 
-
 .ready-prompt {
-    width: 55vw;   
+    width: 100%;   
     height: 100%; 
     top: 50%;
     left: 50%;
@@ -85,6 +100,16 @@ body {
     transition: background-color 0.5s ease m;
 
 }
+
+#canvas {
+    display: none;
+}
+#canvas.portrait{
+    aspect-ratio: 2/3;
+    object-fit: cover;
+}
+
+
 
 #snapshot-container img {
     width: 90%;

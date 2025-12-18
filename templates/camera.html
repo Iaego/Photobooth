@@ -41,12 +41,12 @@
               </div>
           </div>
           <div class="row align-items-center">
-              <div class="main-frame text-center">
+              <div class="main-frame text-center align-items-center">
                   <div id="flash"></div>
                   <div id="ready-prompt" class="ready-prompt d-flex justify-content-center align-items-center">Click CAPTURE when ready!</div>
                   <img id="preview" alt="Preview">
                   <video id="camera" autoplay playsinline></video>
-                  <canvas id="canvas" style="display:none;"></canvas>         
+                  <canvas id="canvas"></canvas>         
               </div>
           </div>
           <div class="row mt-2">
@@ -58,9 +58,9 @@
           <div class="row mt-4"><h2>Snapshots</h2></div>
           <div class="edit-strip d-flex justify-content-center gap-4 mt-4">
             <div id="snapshot-container" class="snapshot-strip d-flex flex-column align-items-center">
-                  <img src="../media/test-shot1.png" alt="">
+                  <!-- <img src="../media/test-shot1.png" alt="">
                   <img src="../media/test-shot2.png" alt="">
-                  <img src="../media/test-shot3.png" alt="">
+                  <img src="../media/test-shot3.png" alt=""> -->
             </div>
             <div class="select-edit">
               <ul class="nav nav-tabs">
@@ -100,15 +100,23 @@
         });
     </script>
 
-    <!-- Script to set prompt text based on layout -->
+    <!-- Script to set prompt text based on layout & set-up camera aspect ratio -->
     <script>
       window.addEventListener('load', () => {
         const prompt = document.getElementById("ready-prompt");
+        const frame = document.querySelector(".main-frame");
+        const cam = document.getElementById("camera");
+        const prev = document.getElementById("preview");
+        const canvas = document.getElementById("canvas");
         const selectedLayout = sessionStorage.getItem("selectedLayout");
         if(selectedLayout === "layout-1"){
           prompt.innerHTML = "Get ready for 3 pictures!";
         } else if(selectedLayout === "layout-2"){
           prompt.innerHTML = "Get ready for 2 pictures!";
+          frame.classList.add("portrait");
+          cam.classList.add("portrait");
+          prev.classList.add("portrait");
+          canvas.classList.add("portrait");
         } else {
           prompt.innerHTML = "Get ready for 4 pictures!"; 
         }
@@ -164,7 +172,69 @@
               await new Promise(resolve => setTimeout(resolve, 80));
 
               ctx.drawImage(video, 0, 0);
+              if(selectedLayout === "layout-2"){
+                const videoW = video.videoWidth;
+                const videoH = video.videoHeight;
+
+                // Target portrait ratio
+                const targetRatio = 2 / 3;
+
+                // Compute crop size
+                let cropW = videoW;
+                let cropH = cropW / targetRatio;
+
+                if (cropH > videoH) {
+                  cropH = videoH;
+                  cropW = cropH * targetRatio;
+                }
+
+                // Center crop
+                const cropX = (videoW - cropW) / 2;
+                const cropY = (videoH - cropH) / 2;
+
+                // Canvas output size = cropped size
+                canvas.width = cropW;
+                canvas.height = cropH;
+
+                // Mirror fix
+                ctx.save();
+                ctx.drawImage(
+                  video,
+                  cropX, cropY, cropW, cropH,
+                  0, 0, canvas.width, canvas.height
+                );
+                ctx.restore();
+              }else{
+                const videoW = video.videoWidth;
+                const videoH = video.videoHeight;
+
+                // Target ratio: 4:3 (width / height)
+                const targetRatio = 4 / 3;
+
+                let cropW = videoW;
+                let cropH = cropW / targetRatio;
+
+                if(cropH > videoH){
+                    cropH = videoH;
+                    cropW = cropH * targetRatio;
+                }
+
+                // Center crop
+                const cropX = (videoW - cropW)/2;
+                const cropY = (videoH - cropH)/2;
+
+                // Canvas output size
+                canvas.width = 600;          // desired width
+                canvas.height = canvas.width / targetRatio;
+
+                ctx.drawImage(
+                    video,
+                    cropX, cropY, cropW, cropH,
+                    0, 0, canvas.width, canvas.height
+                );
+              }
               const imgData = canvas.toDataURL("image/png");
+
 
               /* Show preview of image */
               preview.src = imgData;
@@ -175,10 +245,10 @@
 
               /* Hide preview before next shot */
               preview.style.display = "none";
-              
+
               const img = document.createElement("img");
               img.src = imgData;
-              img.style.width = "90%";
+              img.style.width = "100%";
               img.style.marginBottom = "12px";
               img.style = "transform: scaleX(-1)"; // mirror the image
               document.getElementById("snapshot-container").appendChild(img);

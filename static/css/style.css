@@ -49,6 +49,9 @@ body {
 .main-frame.portrait{
     aspect-ratio: 2/3;
 }
+.main-frame.wide{
+    aspect-ratio: 16/9;
+}
 
 #flash {
     position: absolute;

@@ -118,6 +118,7 @@
           prev.classList.add("portrait");
           canvas.classList.add("portrait");
         } else {
+          frame.classList.add("wide");
           prompt.innerHTML = "Get ready for 4 pictures!"; 
         }
       });
@@ -204,7 +205,7 @@
                   0, 0, canvas.width, canvas.height
                 );
                 ctx.restore();
-              }else{
+              }else if(selectedLayout === "layout-1"){
                 const videoW = video.videoWidth;
                 const videoH = video.videoHeight;
 
@@ -232,6 +233,8 @@
                     cropX, cropY, cropW, cropH,
                     0, 0, canvas.width, canvas.height
                 );
+              }else{
+                // layout-3: no crop needed, as 16:9 matches camera ratio
               }
               const imgData = canvas.toDataURL("image/png");
 

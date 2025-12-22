@@ -236,7 +236,33 @@
                     0, 0, canvas.width, canvas.height
                 );
               }else{
-                // layout-3: no crop needed, as 16:9 matches camera ratio
+                const videoW = video.videoWidth;
+                const videoH = video.videoHeight;
+
+                // Target ratio: 4:3 (width / height)
+                const targetRatio = 16 / 9;
+
+                let cropW = videoW;
+                let cropH = cropW / targetRatio;
+
+                if(cropH > videoH){
+                    cropH = videoH;
+                    cropW = cropH * targetRatio;
+                }
+
+                // Center crop
+                const cropX = (videoW - cropW)/2;
+                const cropY = (videoH - cropH)/2;
+
+                // Canvas output size
+                canvas.width = 600;          // desired width
+                canvas.height = canvas.width / targetRatio;
+
+                ctx.drawImage(
+                    video,
+                    cropX, cropY, cropW, cropH,
+                    0, 0, canvas.width, canvas.height
+                );              
               }
               const imgData = canvas.toDataURL("image/png");
 

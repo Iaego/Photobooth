@@ -4,11 +4,155 @@
 body {
    margin: 0;
    padding: 0;
-}
-#camera {
-    transform: scaleX(-1);
+    background-color: #f9c96e;
 }
 
-.layout-frame, img{
-    margin: 10px;
+.layout{
+    background-color: #fff7d6;
+    width: auto;
+    min-width: 80%;
+    /* height: 80%; */
+    border-radius: 10px;
+}
+
+.photo-strip{
+    width: 55%;
+    /* min-width: 200px; */
+    height: auto;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+    transition: transform 0.3s ease-in-out;
+}
+
+.photo-strip:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+
+/* camera.html page */
+#camera {
+    transform: scaleX(-1);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+#camera.portrait{
+    height: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    transform: scaleX(-1);
+}
+.main-frame {
+    position: relative;
+    aspect-ratio: 4/3;
+}
+.main-frame.portrait{
+    aspect-ratio: 2/3;
+}
+.main-frame.wide{
+    aspect-ratio: 16/9;
+}
+
+#flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2000;
+}
+#flash.flash {
+  animation: flash 0.15s ease-out;
+}
+
+@keyframes flash {
+  0%   { opacity: 0; }
+  50%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+#preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(-1);
+    display: none;
+    z-index: 15;
+    object-fit: contain;
+}
+#preview.portrait{
+    aspect-ratio: 2/3;
+    object-fit: cover;
+}
+
+.ready-prompt {
+    width: 100%;   
+    height: 100%; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    position: absolute;
+    z-index: 999;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: background-color 0.5s ease m;
+
+}
+
+#canvas {
+    display: none;
+}
+#canvas.portrait{
+    aspect-ratio: 2/3;
+    object-fit: cover;
+}
+
+
+
+#snapshot-container img {
+    width: 90%;
+    margin-bottom: 12px;
+    /* filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5)); */
+}
+.grayscale {
+    filter: grayscale(100%);
+}
+.sepia {
+    filter: sepia(60%);
+}
+.film {
+    filter: saturate(116%) hue-rotate(348deg);
+}
+
+#snapshot-container img:first-child {
+    margin-top: 25%;
+}
+
+#snapshot-container{
+    background-color: gray;
+    /* height: 800px; */
+    /* width: auto; */
+}
+
+.snapshot-strip{
+    aspect-ratio: 1 / 3;          /* 2x6 inches */
+    width: clamp(160px, 25vw, 240px);
+    background: white;
+    padding: 12px 0;
+}
+
+.select-edit{
+    height: 500px;
+    width: 500px;
+    background-color: lightgray;
+    border-radius: 5px;
+}
+
+.pickr{
+    margin: 1.5%;
 }

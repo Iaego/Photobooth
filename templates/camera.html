@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../static/css/style.css">
+
+  <!-- Bootstrap CSS-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+  <!-- Pickr from https://github.com/simonwep/pickr--> 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/> <!-- 'classic' theme -->
+
+  <!-- Script to download DIV to img (html2canvas) -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  </head>
+<body style="background-color: #f9c96e;">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link" href="#">Features</a>
+            <a class="nav-link" href="#">Pricing</a>
+            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+        </div>
+        </div>  
+    </div>
+  </nav>
+
+<!-- Select a layout -->
+ <div class="main d-flex justify-content-center">
+    <div class="layout d-flex flex-column align-items-center py-5 mt-5 px-4">
+    <!-- Photobooth -->
+          <div class="row">
+              <div class="hero text-center">
+                  <h1>Start Snapping</h1>
+              </div>
+          </div>
+          <div class="row align-items-center">
+              <div class="main-frame text-center align-items-center">
+                  <div id="flash"></div>
+                  <div id="ready-prompt" class="ready-prompt d-flex justify-content-center align-items-center">Click CAPTURE when ready!</div>
+                  <img id="preview" alt="Preview">
+                  <video id="camera" autoplay playsinline></video>
+                  <canvas id="canvas"></canvas>         
+              </div>
+          </div>
+          <div class="row mt-2">
+              <div class="button-group text-center">
+                  <button type="button" class="btn btn-dark" input="submit" onclick="takePicture()">Capture</button>
+              </div>
+          </div>
+          <div class="row mt-4"><h2>Snapshots</h2></div>
+
+          <!-- Edit Photostrip -->
+          <div class="edit-strip d-flex flex-md-row flex-column justify-content-center align-items-center gap-4 mt-4">
+            <div id="snapshot-container" class="snapshot-strip d-flex flex-column align-items-center">
+                  <!-- <img src="../media/test-shot1.png" alt="">
+                  <img src="../media/test-shot2.png" alt="">
+                  <img src="../media/test-shot3.png" alt=""> -->
+            </div>
+            <div class="operations d-flex flex-column gap-3">
+              <div class="select-edit p-2 d-flex flex-column">
+                <div class="color-select d-flex">
+                  <h2>Pick a color</h2>
+                  <div class="color-choice m-2">
+                    <div class="color-picker p-3"></div>
+                  </div>
+                </div> 
+                <div class="filter-edit">
+                  <div class="dropdown">
+                    <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Filter Options
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><button class="dropdown-item" type="button" onclick="applyFilter('default')">Default</button></li>
+                      <li><button class="dropdown-item" type="button" onclick="applyFilter('grayscale')">Black and White</button></li>
+                      <li><button class="dropdown-item" type="button" onclick="applyFilter('sepia')">Sepia</button></li>
+                      <li><button class="dropdown-item" type="button" onclick="applyFilter('film')">Film</button></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-dark" id="download">Download</button>
+            </div>
+          </div>
+
+    </div>
+  </div>
+    
+    <!-- Pickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+    <script>
+      // Create Pickr instance
+      const pickr = Pickr.create({
+          el: '.color-choice',
+          theme: 'classic', // or 'monolith', or 'nano'
+          default: "#ffffff",
+
+          swatches: [
+              'rgba(244, 67, 54, 1)',
+              'rgba(233, 30, 99, 0.95)',
+              'rgba(156, 39, 176, 0.9)',
+              'rgba(103, 58, 183, 0.85)',
+              'rgba(63, 81, 181, 0.8)',
+              'rgba(33, 150, 243, 0.75)',
+              'rgba(3, 169, 244, 0.7)',
+              'rgba(0, 188, 212, 0.7)',
+              'rgba(0, 150, 136, 0.75)',
+              'rgba(76, 175, 80, 0.8)',
+              'rgba(139, 195, 74, 0.85)',
+              'rgba(205, 220, 57, 0.9)',
+              'rgba(255, 235, 59, 0.95)',
+              'rgba(255, 193, 7, 1)'
+          ],
+
+          components: {
+
+              // Main components
+              preview: true,
+              opacity: true,
+              hue: true,
+
+              // Input / output Options
+              interaction: {
+                  hex: true,
+                  rgba: true,
+                  hsla: true,
+                  hsva: true,
+                  cmyk: true,
+                  input: true,
+                  clear: true,
+                  save: true
+              }
+          }
+      });
+    </script>
+
+    <!-- Script to change the color of the photostrip -->
+    <script>
+        const snapshotContainer = document.getElementById("snapshot-container");
+        pickr.on('save', (color) => {
+            snapshotContainer.style.backgroundColor = color.toRGBA().toString();
+        });
+    </script>
+
+    <!-- Script to turn on camera -->
+    <script>
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            const cam = document.getElementById("camera");
+            cam.srcObject = stream;
+        })
+        .catch(err => {
+            console.error("Camera error:", err);
+        });
+    </script>
+
+    <!-- Script to set prompt text based on layout & set-up camera aspect ratio -->
+    <script>
+      window.addEventListener('load', () => {
+        const prompt = document.getElementById("ready-prompt");
+        const frame = document.querySelector(".main-frame");
+        const cam = document.getElementById("camera");
+        const prev = document.getElementById("preview");
+        const canvas = document.getElementById("canvas");
+        const selectedLayout = sessionStorage.getItem("selectedLayout");
+        if(selectedLayout === "layout-1"){
+          prompt.innerHTML = "Get ready for 3 pictures!";
+        } else if(selectedLayout === "layout-2"){
+          prompt.innerHTML = "Get ready for 2 pictures!";
+          frame.classList.add("portrait");
+          cam.classList.add("portrait");
+          prev.classList.add("portrait");
+          canvas.classList.add("portrait");
+        } else {
+          frame.classList.add("wide");
+          prompt.innerHTML = "Get ready for 4 pictures!"; 
+        }
+      });
+
+    </script>
+
+    <!-- Script to handle flash effect -->
+    <script>
+        function flash() {
+          const flash = document.getElementById("flash");
+          flash.classList.remove("flash"); // reset
+          void flash.offsetWidth;          // reflow (tells the browser to run/apple ALL the CSS changes IMMEDIATELY)
+          flash.classList.add("flash");
+        }
+    </script>
+    <!-- Script to handle filter options -->
+     <script>
+        function applyFilter(filterType) {
+          const video = document.getElementById("snapshot-container");
+          const images = video.querySelectorAll("img");
+          switch(filterType) {
+            case 'default':
+              images.forEach(img => {
+                img.classList.remove('grayscale');
+                img.classList.remove('sepia');
+                img.classList.remove('film');
+              });
+              break;
+            case 'grayscale':
+              images.forEach(img => {
+                img.classList.remove('sepia');
+                img.classList.remove('film');
+                img.classList.add('grayscale');
+              });
+              break;
+            case 'sepia':
+              images.forEach(img => {
+                img.classList.remove('grayscale');
+                img.classList.remove('film');
+                img.classList.add('sepia');
+              });
+              break;
+            case 'film':
+              images.forEach(img => {
+                img.classList.remove('grayscale');
+                img.classList.remove('sepia');
+                img.classList.add('film');
+              });
+              break;
+            default:
+              video.style.filter = 'none';
+          }
+        }
+     </script>
+    <!-- Script to take picture -->
+    <script>
+        async function takePicture() {
+            const prompt = document.getElementById("ready-prompt");
+            var countPic = 0;
+            const selectedLayout = sessionStorage.getItem("selectedLayout");
+            if(selectedLayout === "layout-1"){
+              countPic = 3;
+            } else if(selectedLayout === "layout-2"){
+              countPic = 2;
+            } else {
+              countPic = 4; 
+            }
+            for(let j = countPic; j > 0; j--){
+              prompt.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+              for(let i = 3; i > 0; i--){
+                prompt.innerHTML = i;
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                if(i == 1){
+                  prompt.innerHTML = "";
+                  prompt.style.backgroundColor = "rgba(0, 0, 0, 0)";
+                  await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+              }
+              
+              const preview = document.getElementById("preview");
+              const video = document.getElementById("camera");
+              const canvas = document.getElementById("canvas");
+              const ctx = canvas.getContext("2d");
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+
+              flash(); // Trigger flash effect
+
+              // Slight delay so flash happens before capture
+              await new Promise(resolve => setTimeout(resolve, 80));
+
+              ctx.drawImage(video, 0, 0);
+              if(selectedLayout === "layout-2"){
+                const videoW = video.videoWidth;
+                const videoH = video.videoHeight;
+
+                // Target portrait ratio
+                const targetRatio = 2 / 3;
+
+                // Compute crop size
+                let cropW = videoW;
+                let cropH = cropW / targetRatio;
+
+                if (cropH > videoH) {
+                  cropH = videoH;
+                  cropW = cropH * targetRatio;
+                }
+
+                // Center crop
+                const cropX = (videoW - cropW) / 2;
+                const cropY = (videoH - cropH) / 2;
+
+                // Canvas output size = cropped size
+                canvas.width = cropW;
+                canvas.height = cropH;
+
+                // Mirror fix
+                ctx.save();
+                ctx.drawImage(
+                  video,
+                  cropX, cropY, cropW, cropH,
+                  0, 0, canvas.width, canvas.height
+                );
+                ctx.restore();
+              }else if(selectedLayout === "layout-1"){
+                const videoW = video.videoWidth;
+                const videoH = video.videoHeight;
+
+                // Target ratio: 4:3 (width / height)
+                const targetRatio = 4 / 3;
+
+                let cropW = videoW;
+                let cropH = cropW / targetRatio;
+
+                if(cropH > videoH){
+                    cropH = videoH;
+                    cropW = cropH * targetRatio;
+                }
+
+                // Center crop
+                const cropX = (videoW - cropW)/2;
+                const cropY = (videoH - cropH)/2;
+
+                // Canvas output size
+                canvas.width = 600;          // desired width
+                canvas.height = canvas.width / targetRatio;
+
+                ctx.drawImage(
+                    video,
+                    cropX, cropY, cropW, cropH,
+                    0, 0, canvas.width, canvas.height
+                );
+              }else{
+                const videoW = video.videoWidth;
+                const videoH = video.videoHeight;
+
+                // Target ratio: 4:3 (width / height)
+                const targetRatio = 16 / 9;
+
+                let cropW = videoW;
+                let cropH = cropW / targetRatio;
+
+                if(cropH > videoH){
+                    cropH = videoH;
+                    cropW = cropH * targetRatio;
+                }
+
+                // Center crop
+                const cropX = (videoW - cropW)/2;
+                const cropY = (videoH - cropH)/2;
+
+                // Canvas output size
+                canvas.width = 600;          // desired width
+                canvas.height = canvas.width / targetRatio;
+
+                ctx.drawImage(
+                    video,
+                    cropX, cropY, cropW, cropH,
+                    0, 0, canvas.width, canvas.height
+                );              
+              }
+              const imgData = canvas.toDataURL("image/png");
+
+
+              /* Show preview of image */
+              preview.src = imgData;
+              preview.style.display = "block";
+
+              /* Keep preview visible */
+              await new Promise(r => setTimeout(r, 1200));
+
+              /* Hide preview before next shot */
+              preview.style.display = "none";
+
+              const img = document.createElement("img");
+              img.src = imgData;
+              img.style.width = "100%";
+              img.style.marginBottom = "12px";
+              img.style = "transform: scaleX(-1)"; // mirror the image
+              document.getElementById("snapshot-container").appendChild(img);
+            }
+        }
+    </script>
+
+    <!-- Script to download the snapshot -->
+     <script>
+        document.getElementById("download").addEventListener("click", () => {
+        const div = document.getElementById("snapshot-container");
+
+        html2canvas(div, {
+          scale: 2,           // higher quality
+          useCORS: true,      // allow external images
+          backgroundColor: null
+        }).then(canvas => {
+          const link = document.createElement("a");
+          link.download = "photo.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        });
+      });
+     </script>
+
+    
+
+</body>
+
+</html>

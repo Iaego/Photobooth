@@ -119,6 +119,15 @@ body {
     margin-bottom: 12px;
     /* filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5)); */
 }
+.grayscale {
+    filter: grayscale(100%);
+}
+.sepia {
+    filter: sepia(60%);
+}
+.film {
+    filter: saturate(116%) hue-rotate(348deg);
+}
 
 #snapshot-container img:first-child {
     margin-top: 25%;
@@ -134,7 +143,6 @@ body {
     aspect-ratio: 1 / 3;          /* 2x6 inches */
     width: clamp(160px, 25vw, 240px);
     background: white;
-    border-radius: 8px;
     padding: 12px 0;
 }
 

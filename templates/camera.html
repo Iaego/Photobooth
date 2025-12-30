@@ -13,8 +13,11 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
   <!-- Pickr from https://github.com/simonwep/pickr--> 
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/> <!-- 'classic' theme -->
-</head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/> <!-- 'classic' theme -->
+
+  <!-- Script to download DIV to img (html2canvas) -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  </head>
 <body style="background-color: #f9c96e;">
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
@@ -53,8 +56,7 @@
           </div>
           <div class="row mt-2">
               <div class="button-group text-center">
-                  <button class="button" input="submit" onclick="takePicture()">Capture</button>
-                  <button class="button">Filter 2</button>
+                  <button type="button" class="btn btn-dark" input="submit" onclick="takePicture()">Capture</button>
               </div>
           </div>
           <div class="row mt-4"><h2>Snapshots</h2></div>
@@ -66,14 +68,29 @@
                   <img src="../media/test-shot2.png" alt="">
                   <img src="../media/test-shot3.png" alt=""> -->
             </div>
-            <div class="select-edit p-2">
-              <div class="color-select d-flex">
-                <h1>Pick a color</h1>
-                <div class="color-choice m-2">
-                  <div class="color-picker p-3"></div>
+            <div class="operations d-flex flex-column gap-3">
+              <div class="select-edit p-2 d-flex flex-column">
+                <div class="color-select d-flex">
+                  <h2>Pick a color</h2>
+                  <div class="color-choice m-2">
+                    <div class="color-picker p-3"></div>
+                  </div>
+                </div> 
+                <div class="filter-edit">
+                  <div class="dropdown">
+                    <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Filter Options
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><button class="dropdown-item" type="button" onclick="applyFilter('default')">Default</button></li>
+                      <li><button class="dropdown-item" type="button" onclick="applyFilter('grayscale')">Black and White</button></li>
+                      <li><button class="dropdown-item" type="button" onclick="applyFilter('sepia')">Sepia</button></li>
+                      <li><button class="dropdown-item" type="button" onclick="applyFilter('film')">Film</button></li>
+                    </ul>
+                  </div>
                 </div>
-              </div> 
-
+              </div>
+              <button type="button" class="btn btn-dark" id="download">Download</button>
             </div>
           </div>
 
@@ -182,7 +199,45 @@
           flash.classList.add("flash");
         }
     </script>
-
+    <!-- Script to handle filter options -->
+     <script>
+        function applyFilter(filterType) {
+          const video = document.getElementById("snapshot-container");
+          const images = video.querySelectorAll("img");
+          switch(filterType) {
+            case 'default':
+              images.forEach(img => {
+                img.classList.remove('grayscale');
+                img.classList.remove('sepia');
+                img.classList.remove('film');
+              });
+              break;
+            case 'grayscale':
+              images.forEach(img => {
+                img.classList.remove('sepia');
+                img.classList.remove('film');
+                img.classList.add('grayscale');
+              });
+              break;
+            case 'sepia':
+              images.forEach(img => {
+                img.classList.remove('grayscale');
+                img.classList.remove('film');
+                img.classList.add('sepia');
+              });
+              break;
+            case 'film':
+              images.forEach(img => {
+                img.classList.remove('grayscale');
+                img.classList.remove('sepia');
+                img.classList.add('film');
+              });
+              break;
+            default:
+              video.style.filter = 'none';
+          }
+        }
+     </script>
     <!-- Script to take picture -->
     <script>
         async function takePicture() {
@@ -332,6 +387,24 @@
             }
         }
     </script>
+
+    <!-- Script to download the snapshot -->
+     <script>
+        document.getElementById("download").addEventListener("click", () => {
+        const div = document.getElementById("snapshot-container");
+
+        html2canvas(div, {
+          scale: 2,           // higher quality
+          useCORS: true,      // allow external images
+          backgroundColor: null
+        }).then(canvas => {
+          const link = document.createElement("a");
+          link.download = "photo.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        });
+      });
+     </script>
 
     
 

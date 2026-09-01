@@ -150,7 +150,15 @@ body {
 #snapshot-container img {
     width: 90%;
     margin-bottom: 12px;
-    /* filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5)); */
+    transform: scaleX(-1);
+    cursor: zoom-in;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+#snapshot-container img:hover,
+#snapshot-container img:focus-visible {
+    transform: scaleX(-1) scale(1.035);
+    box-shadow: 0 0 0 4px #fff, 0 8px 20px rgba(0, 0, 0, .35);
+    outline: none;
 }
 .grayscale {
     filter: grayscale(100%);
@@ -198,6 +206,16 @@ body {
 .pickr{
     margin: 1.5%;
 }
+
+body.modal-open { overflow: hidden; }
+.photo-modal[hidden] { display: none; }
+.photo-modal { position: fixed; inset: 0; z-index: 3000; display: grid; place-items: center; padding: clamp(1rem, 4vw, 2rem); }
+.photo-modal__backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, .82); backdrop-filter: blur(5px); }
+.photo-modal__content { position: relative; width: min(900px, 100%); max-height: calc(100svh - 2rem); display: flex; flex-direction: column; align-items: center; gap: 1rem; color: white; }
+.photo-modal__content h2 { margin: 0; }
+.photo-modal__content img { max-width: 100%; max-height: min(68svh, 700px); object-fit: contain; transform: scaleX(-1); border-radius: 8px; }
+.photo-modal__close { position: absolute; z-index: 1; top: -.5rem; right: 0; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(0,0,0,.65); color: white; font-size: 2rem; line-height: 1; }
+.photo-modal__actions { display: flex; justify-content: center; flex-wrap: wrap; gap: .75rem; }
 
 @media (max-width: 767px) {
     .layout-frame { grid-template-columns: 1fr; }

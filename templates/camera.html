@@ -95,6 +95,19 @@
 
     </div>
   </main>
+
+  <div class="photo-modal" id="photo-modal" role="dialog" aria-modal="true" aria-labelledby="photo-modal-title" hidden>
+    <div class="photo-modal__backdrop" data-close-modal></div>
+    <div class="photo-modal__content">
+      <button class="photo-modal__close" type="button" data-close-modal aria-label="Close photo preview">&times;</button>
+      <h2 id="photo-modal-title">Photo preview</h2>
+      <img id="zoomed-photo" alt="Selected snapshot enlarged">
+      <div class="photo-modal__actions">
+        <button class="btn btn-outline-light" type="button" data-close-modal>Close</button>
+        <button class="btn btn-light" id="retake-button" type="button">Retake this photo</button>
+      </div>
+    </div>
+  </div>
     
     <!-- Pickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
@@ -239,158 +252,144 @@
      </script>
     <!-- Script to take picture -->
     <script>
-        async function takePicture() {
-            const prompt = document.getElementById("ready-prompt");
-            const captureButton = document.getElementById("capture-button");
-            const progress = document.getElementById("shot-progress");
-            const selectedLayout = sessionStorage.getItem("selectedLayout");
-            const countPic = Number(sessionStorage.getItem("selectedPhotoCount")) || 3;
-            const video = document.getElementById("camera");
-            if (!video.srcObject || video.readyState < 2) {
-              prompt.innerHTML = "Camera is not ready yet.";
-              return;
-            }
-            captureButton.disabled = true;
-            document.getElementById("snapshot-container").replaceChildren();
-            for(let j = countPic; j > 0; j--){
-              progress.textContent = `Photo ${countPic - j + 1} of ${countPic}`;
-              prompt.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-              for(let i = 3; i > 0; i--){
-                prompt.innerHTML = i;
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                if(i == 1){
-                  prompt.innerHTML = "";
-                  prompt.style.backgroundColor = "rgba(0, 0, 0, 0)";
-                  await new Promise(resolve => setTimeout(resolve, 1000));
-                }
-              }
-              
-              const preview = document.getElementById("preview");
-              const canvas = document.getElementById("canvas");
-              const ctx = canvas.getContext("2d");
-              canvas.width = video.videoWidth;
-              canvas.height = video.videoHeight;
+        const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds));
 
-              flash(); // Trigger flash effect
-
-              // Slight delay so flash happens before capture
-              await new Promise(resolve => setTimeout(resolve, 80));
-
-              ctx.drawImage(video, 0, 0);
-              if(selectedLayout === "layout-2"){
-                const videoW = video.videoWidth;
-                const videoH = video.videoHeight;
-
-                // Target portrait ratio
-                const targetRatio = 2 / 3;
-
-                // Compute crop size
-                let cropW = videoW;
-                let cropH = cropW / targetRatio;
-
-                if (cropH > videoH) {
-                  cropH = videoH;
-                  cropW = cropH * targetRatio;
-                }
-
-                // Center crop
-                const cropX = (videoW - cropW) / 2;
-                const cropY = (videoH - cropH) / 2;
-
-                // Canvas output size = cropped size
-                canvas.width = cropW;
-                canvas.height = cropH;
-
-                // Mirror fix
-                ctx.save();
-                ctx.drawImage(
-                  video,
-                  cropX, cropY, cropW, cropH,
-                  0, 0, canvas.width, canvas.height
-                );
-                ctx.restore();
-              }else if(selectedLayout === "layout-1"){
-                const videoW = video.videoWidth;
-                const videoH = video.videoHeight;
-
-                // Target ratio: 4:3 (width / height)
-                const targetRatio = 4 / 3;
-
-                let cropW = videoW;
-                let cropH = cropW / targetRatio;
-
-                if(cropH > videoH){
-                    cropH = videoH;
-                    cropW = cropH * targetRatio;
-                }
-
-                // Center crop
-                const cropX = (videoW - cropW)/2;
-                const cropY = (videoH - cropH)/2;
-
-                // Canvas output size
-                canvas.width = 600;          // desired width
-                canvas.height = canvas.width / targetRatio;
-
-                ctx.drawImage(
-                    video,
-                    cropX, cropY, cropW, cropH,
-                    0, 0, canvas.width, canvas.height
-                );
-              }else{
-                const videoW = video.videoWidth;
-                const videoH = video.videoHeight;
-
-                // Target ratio: 4:3 (width / height)
-                const targetRatio = 16 / 9;
-
-                let cropW = videoW;
-                let cropH = cropW / targetRatio;
-
-                if(cropH > videoH){
-                    cropH = videoH;
-                    cropW = cropH * targetRatio;
-                }
-
-                // Center crop
-                const cropX = (videoW - cropW)/2;
-                const cropY = (videoH - cropH)/2;
-
-                // Canvas output size
-                canvas.width = 600;          // desired width
-                canvas.height = canvas.width / targetRatio;
-
-                ctx.drawImage(
-                    video,
-                    cropX, cropY, cropW, cropH,
-                    0, 0, canvas.width, canvas.height
-                );              
-              }
-              const imgData = canvas.toDataURL("image/png");
-
-
-              /* Show preview of image */
-              preview.src = imgData;
-              preview.style.display = "block";
-
-              /* Keep preview visible */
-              await new Promise(r => setTimeout(r, 1200));
-
-              /* Hide preview before next shot */
-              preview.style.display = "none";
-
-              const img = document.createElement("img");
-              img.src = imgData;
-              img.style.width = "100%";
-              img.style.marginBottom = "12px";
-              img.style = "transform: scaleX(-1)"; // mirror the image
-              document.getElementById("snapshot-container").appendChild(img);
-            }
-            prompt.innerHTML = "All done!";
-            prompt.style.backgroundColor = "rgba(0, 0, 0, 0.35)";
-            progress.textContent = `${countPic} photos captured.`;
-            captureButton.disabled = false;
+        function cameraIsReady() {
+          const video = document.getElementById("camera");
+          if (video.srcObject && video.readyState >= 2) return true;
+          document.getElementById("ready-prompt").textContent = "Camera is not ready yet.";
+          return false;
         }
+
+        async function capturePhoto() {
+          const prompt = document.getElementById("ready-prompt");
+          const video = document.getElementById("camera");
+          const canvas = document.getElementById("canvas");
+          const preview = document.getElementById("preview");
+          const selectedLayout = sessionStorage.getItem("selectedLayout") || "layout-1";
+
+          prompt.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+          for (let count = 3; count > 0; count--) {
+            prompt.textContent = count;
+            await sleep(1000);
+          }
+          prompt.textContent = "";
+          prompt.style.backgroundColor = "transparent";
+
+          const targetRatio = selectedLayout === "layout-2" ? 2 / 3 : selectedLayout === "layout-3" ? 16 / 9 : 4 / 3;
+          let cropWidth = video.videoWidth;
+          let cropHeight = cropWidth / targetRatio;
+          if (cropHeight > video.videoHeight) {
+            cropHeight = video.videoHeight;
+            cropWidth = cropHeight * targetRatio;
+          }
+
+          const cropX = (video.videoWidth - cropWidth) / 2;
+          const cropY = (video.videoHeight - cropHeight) / 2;
+          canvas.width = Math.min(900, cropWidth);
+          canvas.height = canvas.width / targetRatio;
+
+          flash();
+          await sleep(80);
+          canvas.getContext("2d").drawImage(video, cropX, cropY, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
+          const imageData = canvas.toDataURL("image/png");
+
+          preview.src = imageData;
+          preview.style.display = "block";
+          await sleep(900);
+          preview.style.display = "none";
+          return imageData;
+        }
+
+        function createSnapshot(imageData, photoNumber) {
+          const image = document.createElement("img");
+          image.src = imageData;
+          image.alt = `Snapshot ${photoNumber}. Click to enlarge or retake.`;
+          image.tabIndex = 0;
+          image.dataset.photoNumber = photoNumber;
+          image.addEventListener("click", () => openPhotoModal(image));
+          image.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              openPhotoModal(image);
+            }
+          });
+          return image;
+        }
+
+        async function takePicture() {
+          if (!cameraIsReady()) return;
+          const captureButton = document.getElementById("capture-button");
+          const progress = document.getElementById("shot-progress");
+          const container = document.getElementById("snapshot-container");
+          const photoCount = Number(sessionStorage.getItem("selectedPhotoCount")) || 3;
+
+          captureButton.disabled = true;
+          container.replaceChildren();
+          for (let index = 0; index < photoCount; index++) {
+            progress.textContent = `Photo ${index + 1} of ${photoCount}`;
+            container.appendChild(createSnapshot(await capturePhoto(), index + 1));
+          }
+
+          const prompt = document.getElementById("ready-prompt");
+          prompt.textContent = "All done! Click a photo to preview or retake it.";
+          prompt.style.backgroundColor = "rgba(0, 0, 0, 0.35)";
+          progress.textContent = `${photoCount} photos captured. Select any photo to review it.`;
+          captureButton.disabled = false;
+        }
+    </script>
+
+    <!-- Script to preview and retake individual snapshots -->
+    <script>
+      const photoModal = document.getElementById("photo-modal");
+      const zoomedPhoto = document.getElementById("zoomed-photo");
+      const retakeButton = document.getElementById("retake-button");
+      let selectedSnapshot = null;
+
+      function openPhotoModal(image) {
+        selectedSnapshot = image;
+        zoomedPhoto.src = image.src;
+        zoomedPhoto.className = image.className;
+        photoModal.hidden = false;
+        document.body.classList.add("modal-open");
+        retakeButton.focus();
+      }
+
+      function closePhotoModal() {
+        if (photoModal.hidden) return;
+        photoModal.hidden = true;
+        document.body.classList.remove("modal-open");
+        if (selectedSnapshot) selectedSnapshot.focus();
+      }
+
+      photoModal.querySelectorAll("[data-close-modal]").forEach(control => {
+        control.addEventListener("click", closePhotoModal);
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !photoModal.hidden) closePhotoModal();
+      });
+
+      retakeButton.addEventListener("click", async () => {
+        if (!selectedSnapshot || !cameraIsReady()) return;
+        const imageToReplace = selectedSnapshot;
+        const captureButton = document.getElementById("capture-button");
+        const photoNumber = imageToReplace.dataset.photoNumber;
+
+        closePhotoModal();
+        captureButton.disabled = true;
+        retakeButton.disabled = true;
+        document.querySelector(".camera-wrap").scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById("shot-progress").textContent = `Retaking photo ${photoNumber}...`;
+
+        const newImageData = await capturePhoto();
+        imageToReplace.src = newImageData;
+        document.getElementById("ready-prompt").textContent = "Photo replaced!";
+        document.getElementById("ready-prompt").style.backgroundColor = "rgba(0, 0, 0, 0.35)";
+        document.getElementById("shot-progress").textContent = `Photo ${photoNumber} was retaken. Select a photo to review it.`;
+        captureButton.disabled = false;
+        retakeButton.disabled = false;
+      });
     </script>
 
     <!-- Script to download the snapshot -->

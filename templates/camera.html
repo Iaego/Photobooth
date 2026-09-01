@@ -15,8 +15,6 @@
   <!-- Pickr from https://github.com/simonwep/pickr--> 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/> <!-- 'classic' theme -->
 
-  <!-- Script to download DIV to img (html2canvas) -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -544,19 +542,69 @@
 
     <!-- Script to download the snapshot -->
      <script>
-        document.getElementById("download").addEventListener("click", () => {
-        const div = document.getElementById("snapshot-container");
+      function presetFilterFor(image) {
+        if (image.classList.contains("grayscale")) return "grayscale(100%)";
+        if (image.classList.contains("sepia")) return "sepia(60%)";
+        if (image.classList.contains("film")) return "saturate(116%) hue-rotate(348deg)";
+        return "none";
+      }
 
-        html2canvas(div, {
-          scale: 2,           // higher quality
-          useCORS: true,      // allow external images
-          backgroundColor: null
-        }).then(canvas => {
+      document.getElementById("download").addEventListener("click", async () => {
+        const downloadButton = document.getElementById("download");
+        const strip = document.getElementById("snapshot-container");
+        const snapshots = [...strip.querySelectorAll("img")];
+        if (!snapshots.length) {
+          adjustmentStatus.textContent = "Capture at least one photo before downloading.";
+          return;
+        }
+
+        downloadButton.disabled = true;
+        downloadButton.textContent = "Preparing...";
+        clearTimeout(adjustmentTimer);
+
+        try {
+          // Finish the latest slider changes before composing the downloaded strip.
+          await applyAllPhotoAdjustments();
+
+          const scale = 3;
+          const exportCanvas = document.createElement("canvas");
+          exportCanvas.width = Math.round(strip.clientWidth * scale);
+          exportCanvas.height = Math.round(Math.max(strip.clientHeight, strip.scrollHeight) * scale);
+          const context = exportCanvas.getContext("2d");
+          context.scale(scale, scale);
+          context.fillStyle = getComputedStyle(strip).backgroundColor || "#ffffff";
+          context.fillRect(0, 0, exportCanvas.width / scale, exportCanvas.height / scale);
+          const stripBounds = strip.getBoundingClientRect();
+
+          for (const snapshot of snapshots) {
+            const renderedImage = await loadEditorImage(snapshot.src);
+            const imageBounds = snapshot.getBoundingClientRect();
+            const x = imageBounds.left - stripBounds.left;
+            const y = imageBounds.top - stripBounds.top;
+            const width = imageBounds.width;
+            const height = imageBounds.height;
+
+            context.save();
+            context.filter = presetFilterFor(snapshot);
+            // The live camera and snapshot preview are mirrored, so mirror the export too.
+            context.translate(x + width, y);
+            context.scale(-1, 1);
+            context.drawImage(renderedImage, 0, 0, width, height);
+            context.restore();
+          }
+
           const link = document.createElement("a");
-          link.download = "photo.png";
-          link.href = canvas.toDataURL("image/png");
+          link.download = "gunita-photo-strip.png";
+          link.href = exportCanvas.toDataURL("image/png");
           link.click();
-        });
+          adjustmentStatus.textContent = "Photo strip downloaded with all edits.";
+        } catch (error) {
+          console.error("Download error:", error);
+          adjustmentStatus.textContent = "The download could not be prepared. Please try again.";
+        } finally {
+          downloadButton.disabled = false;
+          downloadButton.textContent = "Download";
+        }
       });
      </script>
 

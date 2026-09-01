@@ -1,35 +1,58 @@
 *{
-    font-family: Arial;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 body {
    margin: 0;
    padding: 0;
-    background-color: #f9c96e;
+    background: #f9c96e;
+    min-height: 100vh;
 }
+
+.page-shell {
+    width: min(1180px, 100%);
+    margin-inline: auto;
+    padding: clamp(1rem, 4vw, 3rem);
+}
+
+.home-hero {
+    min-height: calc(100svh - 56px);
+    padding: clamp(1.5rem, 6vw, 5rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.home-hero h1 { max-width: 850px; font-size: clamp(2.6rem, 9vw, 6rem); line-height: .95; }
+.home-hero > p:not(.eyebrow) { max-width: 650px; font-size: clamp(1rem, 2.5vw, 1.25rem); margin: 1.25rem 0 2rem; }
 
 .layout{
     background-color: #fff7d6;
-    width: auto;
-    min-width: 80%;
-    /* height: 80%; */
-    border-radius: 10px;
+    width: 100%;
+    border-radius: 18px;
+    padding: clamp(1.25rem, 4vw, 3rem);
+    box-shadow: 0 18px 45px rgba(90, 55, 10, .14);
 }
 
+.selection-heading { max-width: 620px; margin: 0 auto 2rem; }
+.selection-heading h1 { font-size: clamp(2rem, 6vw, 3.5rem); }
+.eyebrow { text-transform: uppercase; letter-spacing: .14em; font-weight: 700; font-size: .8rem; }
+.layout-frame { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 3vw, 2rem); }
+.layout-choice { border: 0; border-radius: 14px; padding: 1.25rem; background: rgba(255,255,255,.65); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1rem; font-size: 1.05rem; font-weight: 700; transition: transform .2s, box-shadow .2s; }
+.layout-choice:hover, .layout-choice:focus-visible { transform: translateY(-5px); box-shadow: 0 12px 28px rgba(0,0,0,.14); outline: 3px solid #212529; }
+
 .photo-strip{
-    width: 55%;
+    width: min(100%, 180px);
     /* min-width: 200px; */
     height: auto;
     filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
     transition: transform 0.3s ease-in-out;
 }
 
-.photo-strip:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease-in-out;
-}
-
-
 /* camera.html page */
+.camera-panel { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.camera-wrap { width: min(100%, 820px); }
 #camera {
     transform: scaleX(-1);
     width: 100%;
@@ -45,9 +68,15 @@ body {
 .main-frame {
     position: relative;
     aspect-ratio: 4/3;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #171717;
 }
 .main-frame.portrait{
     aspect-ratio: 2/3;
+    width: min(100%, 440px);
+    margin-inline: auto;
 }
 .main-frame.wide{
     aspect-ratio: 16/9;
@@ -100,7 +129,11 @@ body {
     z-index: 999;
     color: white;
     background-color: rgba(0, 0, 0, 0.5);
-    transition: background-color 0.5s ease m;
+    transition: background-color 0.5s ease;
+    padding: 1rem;
+    text-align: center;
+    font-size: clamp(1.25rem, 5vw, 3rem);
+    font-weight: 700;
 
 }
 
@@ -146,13 +179,36 @@ body {
     padding: 12px 0;
 }
 
+.capture-actions { width: 100%; text-align: center; }
+.capture-button { min-width: 150px; min-height: 48px; }
+.snapshot-title { width: 100%; margin-top: 1rem; }
+.snapshot-title p { margin: 0; }
+.edit-strip { width: 100%; display: flex; justify-content: center; align-items: flex-start; gap: clamp(1rem, 4vw, 2.5rem); }
+.operations { display: flex; flex-direction: column; gap: 1rem; width: min(100%, 500px); }
+
 .select-edit{
-    height: 500px;
-    width: 500px;
+    min-height: 220px;
+    width: 100%;
     background-color: lightgray;
     border-radius: 5px;
+    padding: clamp(1rem, 3vw, 1.5rem);
 }
+.color-select { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; }
 
 .pickr{
     margin: 1.5%;
+}
+
+@media (max-width: 767px) {
+    .layout-frame { grid-template-columns: 1fr; }
+    .layout-choice { flex-direction: row; justify-content: center; }
+    .layout-choice .photo-strip { width: 90px; max-height: 160px; object-fit: contain; }
+    .edit-strip { flex-direction: column; align-items: center; }
+    .snapshot-strip { width: min(210px, 70vw); }
+}
+
+@media (max-width: 420px) {
+    .page-shell { padding: .75rem; }
+    .layout { border-radius: 12px; }
+    .navbar-nav { padding-inline: .75rem; }
 }

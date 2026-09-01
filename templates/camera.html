@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Take your photos | Gunita Studios</title>
   <link rel="stylesheet" href="../static/css/style.css">
 
   <!-- Bootstrap CSS-->
@@ -18,35 +18,34 @@
   <!-- Script to download DIV to img (html2canvas) -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   </head>
-<body style="background-color: #f9c96e;">
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="index.html">Gunita Studios</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-            <a class="nav-link" href="#">Features</a>
-            <a class="nav-link" href="#">Pricing</a>
-            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="layout.html">Choose photos</a>
+            <a class="nav-link active" aria-current="page" href="camera.html">Camera</a>
         </div>
         </div>  
     </div>
   </nav>
 
 <!-- Select a layout -->
- <div class="main d-flex justify-content-center">
-    <div class="layout d-flex flex-column align-items-center py-5 mt-5 px-4">
+ <main class="page-shell">
+    <div class="layout camera-panel">
     <!-- Photobooth -->
-          <div class="row">
+          <div class="text-center">
               <div class="hero text-center">
                   <h1>Start Snapping</h1>
               </div>
           </div>
-          <div class="row align-items-center">
-              <div class="main-frame text-center align-items-center">
+          <div class="camera-wrap">
+              <div class="main-frame">
                   <div id="flash"></div>
                   <div id="ready-prompt" class="ready-prompt d-flex justify-content-center align-items-center">Click CAPTURE when ready!</div>
                   <img id="preview" alt="Preview">
@@ -54,23 +53,23 @@
                   <canvas id="canvas"></canvas>         
               </div>
           </div>
-          <div class="row mt-2">
+          <div class="capture-actions">
               <div class="button-group text-center">
-                  <button type="button" class="btn btn-dark" input="submit" onclick="takePicture()">Capture</button>
+                  <button type="button" class="btn btn-dark capture-button" id="capture-button" onclick="takePicture()">Capture</button>
               </div>
           </div>
-          <div class="row mt-4"><h2>Snapshots</h2></div>
+          <div class="snapshot-title"><h2>Snapshots</h2><p id="shot-progress">Your photos will appear below.</p></div>
 
           <!-- Edit Photostrip -->
-          <div class="edit-strip d-flex flex-md-row flex-column justify-content-center align-items-center gap-4 mt-4">
+          <div class="edit-strip">
             <div id="snapshot-container" class="snapshot-strip d-flex flex-column align-items-center">
                   <!-- <img src="../media/test-shot1.png" alt="">
                   <img src="../media/test-shot2.png" alt="">
                   <img src="../media/test-shot3.png" alt=""> -->
             </div>
-            <div class="operations d-flex flex-column gap-3">
-              <div class="select-edit p-2 d-flex flex-column">
-                <div class="color-select d-flex">
+              <div class="operations">
+              <div class="select-edit">
+                <div class="color-select">
                   <h2>Pick a color</h2>
                   <div class="color-choice m-2">
                     <div class="color-picker p-3"></div>
@@ -95,7 +94,7 @@
           </div>
 
     </div>
-  </div>
+  </main>
     
     <!-- Pickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
@@ -162,6 +161,7 @@
         })
         .catch(err => {
             console.error("Camera error:", err);
+            document.getElementById("ready-prompt").textContent = "Camera access is required. Please allow it and reload.";
         });
     </script>
 
@@ -173,18 +173,17 @@
         const cam = document.getElementById("camera");
         const prev = document.getElementById("preview");
         const canvas = document.getElementById("canvas");
-        const selectedLayout = sessionStorage.getItem("selectedLayout");
+        const selectedLayout = sessionStorage.getItem("selectedLayout") || "layout-1";
+        const photoCount = Number(sessionStorage.getItem("selectedPhotoCount")) || 3;
+        prompt.innerHTML = `Get ready for ${photoCount} picture${photoCount === 1 ? "" : "s"}!`;
         if(selectedLayout === "layout-1"){
-          prompt.innerHTML = "Get ready for 3 pictures!";
         } else if(selectedLayout === "layout-2"){
-          prompt.innerHTML = "Get ready for 2 pictures!";
           frame.classList.add("portrait");
           cam.classList.add("portrait");
           prev.classList.add("portrait");
           canvas.classList.add("portrait");
         } else {
           frame.classList.add("wide");
-          prompt.innerHTML = "Get ready for 4 pictures!"; 
         }
       });
 
@@ -242,16 +241,19 @@
     <script>
         async function takePicture() {
             const prompt = document.getElementById("ready-prompt");
-            var countPic = 0;
+            const captureButton = document.getElementById("capture-button");
+            const progress = document.getElementById("shot-progress");
             const selectedLayout = sessionStorage.getItem("selectedLayout");
-            if(selectedLayout === "layout-1"){
-              countPic = 3;
-            } else if(selectedLayout === "layout-2"){
-              countPic = 2;
-            } else {
-              countPic = 4; 
+            const countPic = Number(sessionStorage.getItem("selectedPhotoCount")) || 3;
+            const video = document.getElementById("camera");
+            if (!video.srcObject || video.readyState < 2) {
+              prompt.innerHTML = "Camera is not ready yet.";
+              return;
             }
+            captureButton.disabled = true;
+            document.getElementById("snapshot-container").replaceChildren();
             for(let j = countPic; j > 0; j--){
+              progress.textContent = `Photo ${countPic - j + 1} of ${countPic}`;
               prompt.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
               for(let i = 3; i > 0; i--){
                 prompt.innerHTML = i;
@@ -264,7 +266,6 @@
               }
               
               const preview = document.getElementById("preview");
-              const video = document.getElementById("camera");
               const canvas = document.getElementById("canvas");
               const ctx = canvas.getContext("2d");
               canvas.width = video.videoWidth;
@@ -385,6 +386,10 @@
               img.style = "transform: scaleX(-1)"; // mirror the image
               document.getElementById("snapshot-container").appendChild(img);
             }
+            prompt.innerHTML = "All done!";
+            prompt.style.backgroundColor = "rgba(0, 0, 0, 0.35)";
+            progress.textContent = `${countPic} photos captured.`;
+            captureButton.disabled = false;
         }
     </script>
 

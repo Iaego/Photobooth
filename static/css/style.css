@@ -202,6 +202,13 @@ body {
     padding: clamp(1rem, 3vw, 1.5rem);
 }
 .color-select { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; }
+.adjustments { display: grid; gap: .8rem; margin-top: 1.25rem; }
+.adjustments-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.adjustments-heading h2 { margin: 0; font-size: 1.35rem; }
+.adjustment-control { display: grid; grid-template-columns: 1fr auto; gap: .25rem 1rem; font-weight: 600; }
+.adjustment-control output { min-width: 55px; text-align: right; font-variant-numeric: tabular-nums; }
+.adjustment-control input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: #212529; cursor: pointer; }
+.adjustment-status { min-height: 1.25rem; margin: 0; color: #555; font-size: .875rem; }
 
 .pickr{
     margin: 1.5%;

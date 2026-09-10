@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Take your photos | Gunita Studios</title>
   <link rel="stylesheet" href="../static/css/style.css">
 
   <!-- Bootstrap CSS-->
@@ -15,38 +15,35 @@
   <!-- Pickr from https://github.com/simonwep/pickr--> 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/> <!-- 'classic' theme -->
 
-  <!-- Script to download DIV to img (html2canvas) -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   </head>
-<body style="background-color: #f9c96e;">
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="index.html">Gunita Studios</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-            <a class="nav-link" href="#">Features</a>
-            <a class="nav-link" href="#">Pricing</a>
-            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="layout.html">Choose photos</a>
+            <a class="nav-link active" aria-current="page" href="camera.html">Camera</a>
         </div>
         </div>  
     </div>
   </nav>
 
 <!-- Select a layout -->
- <div class="main d-flex justify-content-center">
-    <div class="layout d-flex flex-column align-items-center py-5 mt-5 px-4">
+ <main class="page-shell">
+    <div class="layout camera-panel">
     <!-- Photobooth -->
-          <div class="row">
+          <div class="text-center">
               <div class="hero text-center">
                   <h1>Start Snapping</h1>
               </div>
           </div>
-          <div class="row align-items-center">
-              <div class="main-frame text-center align-items-center">
+          <div class="camera-wrap">
+              <div class="main-frame">
                   <div id="flash"></div>
                   <div id="ready-prompt" class="ready-prompt d-flex justify-content-center align-items-center">Click CAPTURE when ready!</div>
                   <img id="preview" alt="Preview">
@@ -54,23 +51,23 @@
                   <canvas id="canvas"></canvas>         
               </div>
           </div>
-          <div class="row mt-2">
+          <div class="capture-actions">
               <div class="button-group text-center">
-                  <button type="button" class="btn btn-dark" input="submit" onclick="takePicture()">Capture</button>
+                  <button type="button" class="btn btn-dark capture-button" id="capture-button" onclick="takePicture()">Capture</button>
               </div>
           </div>
-          <div class="row mt-4"><h2>Snapshots</h2></div>
+          <div class="snapshot-title"><h2>Snapshots</h2><p id="shot-progress">Your photos will appear below.</p></div>
 
           <!-- Edit Photostrip -->
-          <div class="edit-strip d-flex flex-md-row flex-column justify-content-center align-items-center gap-4 mt-4">
+          <div class="edit-strip">
             <div id="snapshot-container" class="snapshot-strip d-flex flex-column align-items-center">
                   <!-- <img src="../media/test-shot1.png" alt="">
                   <img src="../media/test-shot2.png" alt="">
                   <img src="../media/test-shot3.png" alt=""> -->
             </div>
-            <div class="operations d-flex flex-column gap-3">
-              <div class="select-edit p-2 d-flex flex-column">
-                <div class="color-select d-flex">
+              <div class="operations">
+              <div class="select-edit">
+                <div class="color-select">
                   <h2>Pick a color</h2>
                   <div class="color-choice m-2">
                     <div class="color-picker p-3"></div>
@@ -89,11 +86,49 @@
                     </ul>
                   </div>
                 </div>
+                <div class="adjustments" aria-labelledby="adjustments-title">
+                  <div class="adjustments-heading">
+                    <h2 id="adjustments-title">Adjust photo</h2>
+                    <button class="btn btn-sm btn-outline-dark" id="reset-adjustments" type="button">Reset</button>
+                  </div>
+                  <label class="adjustment-control">Exposure <output for="exposure">0</output>
+                    <input id="exposure" data-adjustment type="range" min="-2" max="2" value="0" step="0.1">
+                  </label>
+                  <label class="adjustment-control">Contrast <output for="contrast">0</output>
+                    <input id="contrast" data-adjustment type="range" min="-100" max="100" value="0" step="1">
+                  </label>
+                  <label class="adjustment-control">White balance <output for="white-balance">0</output>
+                    <input id="white-balance" data-adjustment type="range" min="-100" max="100" value="0" step="1">
+                  </label>
+                  <label class="adjustment-control">Saturation <output for="saturation">0</output>
+                    <input id="saturation" data-adjustment type="range" min="-100" max="100" value="0" step="1">
+                  </label>
+                  <label class="adjustment-control">Sharpening <output for="sharpening">0</output>
+                    <input id="sharpening" data-adjustment type="range" min="0" max="100" value="0" step="1">
+                  </label>
+                  <label class="adjustment-control">Noise reduction <output for="noise-reduction">0</output>
+                    <input id="noise-reduction" data-adjustment type="range" min="0" max="100" value="0" step="1">
+                  </label>
+                  <p class="adjustment-status" id="adjustment-status" aria-live="polite"></p>
+                </div>
               </div>
               <button type="button" class="btn btn-dark" id="download">Download</button>
             </div>
           </div>
 
+    </div>
+  </main>
+
+  <div class="photo-modal" id="photo-modal" role="dialog" aria-modal="true" aria-labelledby="photo-modal-title" hidden>
+    <div class="photo-modal__backdrop" data-close-modal></div>
+    <div class="photo-modal__content">
+      <button class="photo-modal__close" type="button" data-close-modal aria-label="Close photo preview">&times;</button>
+      <h2 id="photo-modal-title">Photo preview</h2>
+      <img id="zoomed-photo" alt="Selected snapshot enlarged">
+      <div class="photo-modal__actions">
+        <button class="btn btn-outline-light" type="button" data-close-modal>Close</button>
+        <button class="btn btn-light" id="retake-button" type="button">Retake this photo</button>
+      </div>
     </div>
   </div>
     
@@ -162,6 +197,7 @@
         })
         .catch(err => {
             console.error("Camera error:", err);
+            document.getElementById("ready-prompt").textContent = "Camera access is required. Please allow it and reload.";
         });
     </script>
 
@@ -173,18 +209,17 @@
         const cam = document.getElementById("camera");
         const prev = document.getElementById("preview");
         const canvas = document.getElementById("canvas");
-        const selectedLayout = sessionStorage.getItem("selectedLayout");
+        const selectedLayout = sessionStorage.getItem("selectedLayout") || "layout-1";
+        const photoCount = Number(sessionStorage.getItem("selectedPhotoCount")) || 3;
+        prompt.innerHTML = `Get ready for ${photoCount} picture${photoCount === 1 ? "" : "s"}!`;
         if(selectedLayout === "layout-1"){
-          prompt.innerHTML = "Get ready for 3 pictures!";
         } else if(selectedLayout === "layout-2"){
-          prompt.innerHTML = "Get ready for 2 pictures!";
           frame.classList.add("portrait");
           cam.classList.add("portrait");
           prev.classList.add("portrait");
           canvas.classList.add("portrait");
         } else {
           frame.classList.add("wide");
-          prompt.innerHTML = "Get ready for 4 pictures!"; 
         }
       });
 
@@ -240,169 +275,336 @@
      </script>
     <!-- Script to take picture -->
     <script>
-        async function takePicture() {
-            const prompt = document.getElementById("ready-prompt");
-            var countPic = 0;
-            const selectedLayout = sessionStorage.getItem("selectedLayout");
-            if(selectedLayout === "layout-1"){
-              countPic = 3;
-            } else if(selectedLayout === "layout-2"){
-              countPic = 2;
-            } else {
-              countPic = 4; 
-            }
-            for(let j = countPic; j > 0; j--){
-              prompt.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-              for(let i = 3; i > 0; i--){
-                prompt.innerHTML = i;
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                if(i == 1){
-                  prompt.innerHTML = "";
-                  prompt.style.backgroundColor = "rgba(0, 0, 0, 0)";
-                  await new Promise(resolve => setTimeout(resolve, 1000));
-                }
-              }
-              
-              const preview = document.getElementById("preview");
-              const video = document.getElementById("camera");
-              const canvas = document.getElementById("canvas");
-              const ctx = canvas.getContext("2d");
-              canvas.width = video.videoWidth;
-              canvas.height = video.videoHeight;
+        const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds));
 
-              flash(); // Trigger flash effect
-
-              // Slight delay so flash happens before capture
-              await new Promise(resolve => setTimeout(resolve, 80));
-
-              ctx.drawImage(video, 0, 0);
-              if(selectedLayout === "layout-2"){
-                const videoW = video.videoWidth;
-                const videoH = video.videoHeight;
-
-                // Target portrait ratio
-                const targetRatio = 2 / 3;
-
-                // Compute crop size
-                let cropW = videoW;
-                let cropH = cropW / targetRatio;
-
-                if (cropH > videoH) {
-                  cropH = videoH;
-                  cropW = cropH * targetRatio;
-                }
-
-                // Center crop
-                const cropX = (videoW - cropW) / 2;
-                const cropY = (videoH - cropH) / 2;
-
-                // Canvas output size = cropped size
-                canvas.width = cropW;
-                canvas.height = cropH;
-
-                // Mirror fix
-                ctx.save();
-                ctx.drawImage(
-                  video,
-                  cropX, cropY, cropW, cropH,
-                  0, 0, canvas.width, canvas.height
-                );
-                ctx.restore();
-              }else if(selectedLayout === "layout-1"){
-                const videoW = video.videoWidth;
-                const videoH = video.videoHeight;
-
-                // Target ratio: 4:3 (width / height)
-                const targetRatio = 4 / 3;
-
-                let cropW = videoW;
-                let cropH = cropW / targetRatio;
-
-                if(cropH > videoH){
-                    cropH = videoH;
-                    cropW = cropH * targetRatio;
-                }
-
-                // Center crop
-                const cropX = (videoW - cropW)/2;
-                const cropY = (videoH - cropH)/2;
-
-                // Canvas output size
-                canvas.width = 600;          // desired width
-                canvas.height = canvas.width / targetRatio;
-
-                ctx.drawImage(
-                    video,
-                    cropX, cropY, cropW, cropH,
-                    0, 0, canvas.width, canvas.height
-                );
-              }else{
-                const videoW = video.videoWidth;
-                const videoH = video.videoHeight;
-
-                // Target ratio: 4:3 (width / height)
-                const targetRatio = 16 / 9;
-
-                let cropW = videoW;
-                let cropH = cropW / targetRatio;
-
-                if(cropH > videoH){
-                    cropH = videoH;
-                    cropW = cropH * targetRatio;
-                }
-
-                // Center crop
-                const cropX = (videoW - cropW)/2;
-                const cropY = (videoH - cropH)/2;
-
-                // Canvas output size
-                canvas.width = 600;          // desired width
-                canvas.height = canvas.width / targetRatio;
-
-                ctx.drawImage(
-                    video,
-                    cropX, cropY, cropW, cropH,
-                    0, 0, canvas.width, canvas.height
-                );              
-              }
-              const imgData = canvas.toDataURL("image/png");
-
-
-              /* Show preview of image */
-              preview.src = imgData;
-              preview.style.display = "block";
-
-              /* Keep preview visible */
-              await new Promise(r => setTimeout(r, 1200));
-
-              /* Hide preview before next shot */
-              preview.style.display = "none";
-
-              const img = document.createElement("img");
-              img.src = imgData;
-              img.style.width = "100%";
-              img.style.marginBottom = "12px";
-              img.style = "transform: scaleX(-1)"; // mirror the image
-              document.getElementById("snapshot-container").appendChild(img);
-            }
+        function cameraIsReady() {
+          const video = document.getElementById("camera");
+          if (video.srcObject && video.readyState >= 2) return true;
+          document.getElementById("ready-prompt").textContent = "Camera is not ready yet.";
+          return false;
         }
+
+        async function capturePhoto() {
+          const prompt = document.getElementById("ready-prompt");
+          const video = document.getElementById("camera");
+          const canvas = document.getElementById("canvas");
+          const preview = document.getElementById("preview");
+          const selectedLayout = sessionStorage.getItem("selectedLayout") || "layout-1";
+
+          prompt.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+          for (let count = 3; count > 0; count--) {
+            prompt.textContent = count;
+            await sleep(1000);
+          }
+          prompt.textContent = "";
+          prompt.style.backgroundColor = "transparent";
+
+          const targetRatio = selectedLayout === "layout-2" ? 2 / 3 : selectedLayout === "layout-3" ? 16 / 9 : 4 / 3;
+          let cropWidth = video.videoWidth;
+          let cropHeight = cropWidth / targetRatio;
+          if (cropHeight > video.videoHeight) {
+            cropHeight = video.videoHeight;
+            cropWidth = cropHeight * targetRatio;
+          }
+
+          const cropX = (video.videoWidth - cropWidth) / 2;
+          const cropY = (video.videoHeight - cropHeight) / 2;
+          canvas.width = Math.min(900, cropWidth);
+          canvas.height = canvas.width / targetRatio;
+
+          flash();
+          await sleep(80);
+          canvas.getContext("2d").drawImage(video, cropX, cropY, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
+          const imageData = canvas.toDataURL("image/png");
+
+          preview.src = imageData;
+          preview.style.display = "block";
+          await sleep(900);
+          preview.style.display = "none";
+          return imageData;
+        }
+
+        function createSnapshot(imageData, photoNumber) {
+          const image = document.createElement("img");
+          image.src = imageData;
+          image.dataset.originalSrc = imageData;
+          image.alt = `Snapshot ${photoNumber}. Click to enlarge or retake.`;
+          image.tabIndex = 0;
+          image.dataset.photoNumber = photoNumber;
+          image.addEventListener("click", () => openPhotoModal(image));
+          image.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              openPhotoModal(image);
+            }
+          });
+          return image;
+        }
+
+        async function takePicture() {
+          if (!cameraIsReady()) return;
+          const captureButton = document.getElementById("capture-button");
+          const progress = document.getElementById("shot-progress");
+          const container = document.getElementById("snapshot-container");
+          const photoCount = Number(sessionStorage.getItem("selectedPhotoCount")) || 3;
+
+          captureButton.disabled = true;
+          container.replaceChildren();
+          for (let index = 0; index < photoCount; index++) {
+            progress.textContent = `Photo ${index + 1} of ${photoCount}`;
+            container.appendChild(createSnapshot(await capturePhoto(), index + 1));
+          }
+
+          const prompt = document.getElementById("ready-prompt");
+          prompt.textContent = "All done! Click a photo to preview or retake it.";
+          prompt.style.backgroundColor = "rgba(0, 0, 0, 0.35)";
+          progress.textContent = `${photoCount} photos captured. Select any photo to review it.`;
+          captureButton.disabled = false;
+          applyAllPhotoAdjustments();
+        }
+    </script>
+
+    <!-- Slider-based photo adjustments -->
+    <script>
+      const adjustmentInputs = [...document.querySelectorAll("[data-adjustment]")];
+      const adjustmentStatus = document.getElementById("adjustment-status");
+      let adjustmentTimer;
+      let adjustmentRun = 0;
+
+      function adjustmentValues() {
+        return Object.fromEntries(adjustmentInputs.map(input => [input.id, Number(input.value)]));
+      }
+
+      function updateAdjustmentLabels() {
+        adjustmentInputs.forEach(input => {
+          const output = document.querySelector(`output[for="${input.id}"]`);
+          output.value = input.id === "exposure" ? `${Number(input.value) > 0 ? "+" : ""}${input.value} EV` : input.value;
+        });
+      }
+
+      function loadEditorImage(source) {
+        return new Promise((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => resolve(image);
+          image.onerror = reject;
+          image.src = source;
+        });
+      }
+
+      function blurPixels(source, width, height, amount) {
+        if (!amount) return source;
+        const result = new Uint8ClampedArray(source);
+        for (let y = 1; y < height - 1; y++) {
+          for (let x = 1; x < width - 1; x++) {
+            const index = (y * width + x) * 4;
+            for (let channel = 0; channel < 3; channel++) {
+              const average = (source[index + channel] + source[index - 4 + channel] + source[index + 4 + channel] + source[index - width * 4 + channel] + source[index + width * 4 + channel]) / 5;
+              result[index + channel] = source[index + channel] * (1 - amount) + average * amount;
+            }
+          }
+        }
+        return result;
+      }
+
+      function sharpenPixels(source, width, height, strength) {
+        if (!strength) return source;
+        const result = new Uint8ClampedArray(source);
+        for (let y = 1; y < height - 1; y++) {
+          for (let x = 1; x < width - 1; x++) {
+            const index = (y * width + x) * 4;
+            for (let channel = 0; channel < 3; channel++) {
+              const neighbors = source[index - 4 + channel] + source[index + 4 + channel] + source[index - width * 4 + channel] + source[index + width * 4 + channel];
+              result[index + channel] = source[index + channel] * (1 + 4 * strength) - neighbors * strength;
+            }
+          }
+        }
+        return result;
+      }
+
+      async function applyAdjustmentsToImage(snapshot, values, runId = adjustmentRun) {
+        const sourceImage = await loadEditorImage(snapshot.dataset.originalSrc);
+        if (runId !== adjustmentRun) return;
+        const canvas = document.createElement("canvas");
+        canvas.width = sourceImage.naturalWidth;
+        canvas.height = sourceImage.naturalHeight;
+        const context = canvas.getContext("2d", { willReadFrequently: true });
+        context.drawImage(sourceImage, 0, 0);
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+        const exposure = 2 ** values.exposure;
+        const contrast = (259 * (values.contrast + 255)) / (255 * (259 - values.contrast));
+        const saturation = 1 + values.saturation / 100;
+        const temperature = values["white-balance"] / 100;
+
+        for (let index = 0; index < pixels.length; index += 4) {
+          let red = pixels[index] * exposure + temperature * 28;
+          let green = pixels[index + 1] * exposure + temperature * 4;
+          let blue = pixels[index + 2] * exposure - temperature * 28;
+          red = contrast * (red - 128) + 128;
+          green = contrast * (green - 128) + 128;
+          blue = contrast * (blue - 128) + 128;
+          const luminance = .2126 * red + .7152 * green + .0722 * blue;
+          pixels[index] = luminance + (red - luminance) * saturation;
+          pixels[index + 1] = luminance + (green - luminance) * saturation;
+          pixels[index + 2] = luminance + (blue - luminance) * saturation;
+        }
+
+        let processed = blurPixels(pixels, canvas.width, canvas.height, values["noise-reduction"] / 100);
+        processed = sharpenPixels(processed, canvas.width, canvas.height, values.sharpening / 100);
+        imageData.data.set(processed);
+        context.putImageData(imageData, 0, 0);
+        if (runId === adjustmentRun) {
+          snapshot.src = canvas.toDataURL("image/jpeg", .92);
+          if (selectedSnapshot === snapshot && !photoModal.hidden) zoomedPhoto.src = snapshot.src;
+        }
+      }
+
+      async function applyAllPhotoAdjustments() {
+        const snapshots = [...document.querySelectorAll("#snapshot-container img")];
+        if (!snapshots.length) {
+          adjustmentStatus.textContent = "Capture photos to start editing.";
+          return;
+        }
+        const runId = ++adjustmentRun;
+        adjustmentStatus.textContent = "Applying adjustments...";
+        await Promise.all(snapshots.map(snapshot => applyAdjustmentsToImage(snapshot, adjustmentValues(), runId)));
+        if (runId === adjustmentRun) adjustmentStatus.textContent = "Adjustments applied.";
+      }
+
+      adjustmentInputs.forEach(input => input.addEventListener("input", () => {
+        updateAdjustmentLabels();
+        clearTimeout(adjustmentTimer);
+        adjustmentTimer = setTimeout(applyAllPhotoAdjustments, 140);
+      }));
+
+      document.getElementById("reset-adjustments").addEventListener("click", () => {
+        adjustmentInputs.forEach(input => input.value = 0);
+        updateAdjustmentLabels();
+        applyAllPhotoAdjustments();
+      });
+      updateAdjustmentLabels();
+    </script>
+
+    <!-- Script to preview and retake individual snapshots -->
+    <script>
+      const photoModal = document.getElementById("photo-modal");
+      const zoomedPhoto = document.getElementById("zoomed-photo");
+      const retakeButton = document.getElementById("retake-button");
+      let selectedSnapshot = null;
+
+      function openPhotoModal(image) {
+        selectedSnapshot = image;
+        zoomedPhoto.src = image.src;
+        zoomedPhoto.className = image.className;
+        photoModal.hidden = false;
+        document.body.classList.add("modal-open");
+        retakeButton.focus();
+      }
+
+      function closePhotoModal() {
+        if (photoModal.hidden) return;
+        photoModal.hidden = true;
+        document.body.classList.remove("modal-open");
+        if (selectedSnapshot) selectedSnapshot.focus();
+      }
+
+      photoModal.querySelectorAll("[data-close-modal]").forEach(control => {
+        control.addEventListener("click", closePhotoModal);
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !photoModal.hidden) closePhotoModal();
+      });
+
+      retakeButton.addEventListener("click", async () => {
+        if (!selectedSnapshot || !cameraIsReady()) return;
+        const imageToReplace = selectedSnapshot;
+        const captureButton = document.getElementById("capture-button");
+        const photoNumber = imageToReplace.dataset.photoNumber;
+
+        closePhotoModal();
+        captureButton.disabled = true;
+        retakeButton.disabled = true;
+        document.querySelector(".camera-wrap").scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById("shot-progress").textContent = `Retaking photo ${photoNumber}...`;
+
+        const newImageData = await capturePhoto();
+        imageToReplace.dataset.originalSrc = newImageData;
+        imageToReplace.src = newImageData;
+        await applyAdjustmentsToImage(imageToReplace, adjustmentValues());
+        document.getElementById("ready-prompt").textContent = "Photo replaced!";
+        document.getElementById("ready-prompt").style.backgroundColor = "rgba(0, 0, 0, 0.35)";
+        document.getElementById("shot-progress").textContent = `Photo ${photoNumber} was retaken. Select a photo to review it.`;
+        captureButton.disabled = false;
+        retakeButton.disabled = false;
+      });
     </script>
 
     <!-- Script to download the snapshot -->
      <script>
-        document.getElementById("download").addEventListener("click", () => {
-        const div = document.getElementById("snapshot-container");
+      function presetFilterFor(image) {
+        if (image.classList.contains("grayscale")) return "grayscale(100%)";
+        if (image.classList.contains("sepia")) return "sepia(60%)";
+        if (image.classList.contains("film")) return "saturate(116%) hue-rotate(348deg)";
+        return "none";
+      }
 
-        html2canvas(div, {
-          scale: 2,           // higher quality
-          useCORS: true,      // allow external images
-          backgroundColor: null
-        }).then(canvas => {
+      document.getElementById("download").addEventListener("click", async () => {
+        const downloadButton = document.getElementById("download");
+        const strip = document.getElementById("snapshot-container");
+        const snapshots = [...strip.querySelectorAll("img")];
+        if (!snapshots.length) {
+          adjustmentStatus.textContent = "Capture at least one photo before downloading.";
+          return;
+        }
+
+        downloadButton.disabled = true;
+        downloadButton.textContent = "Preparing...";
+        clearTimeout(adjustmentTimer);
+
+        try {
+          // Finish the latest slider changes before composing the downloaded strip.
+          await applyAllPhotoAdjustments();
+
+          const scale = 3;
+          const exportCanvas = document.createElement("canvas");
+          exportCanvas.width = Math.round(strip.clientWidth * scale);
+          exportCanvas.height = Math.round(Math.max(strip.clientHeight, strip.scrollHeight) * scale);
+          const context = exportCanvas.getContext("2d");
+          context.scale(scale, scale);
+          context.fillStyle = getComputedStyle(strip).backgroundColor || "#ffffff";
+          context.fillRect(0, 0, exportCanvas.width / scale, exportCanvas.height / scale);
+          const stripBounds = strip.getBoundingClientRect();
+
+          for (const snapshot of snapshots) {
+            const renderedImage = await loadEditorImage(snapshot.src);
+            const imageBounds = snapshot.getBoundingClientRect();
+            const x = imageBounds.left - stripBounds.left;
+            const y = imageBounds.top - stripBounds.top;
+            const width = imageBounds.width;
+            const height = imageBounds.height;
+
+            context.save();
+            context.filter = presetFilterFor(snapshot);
+            // The live camera and snapshot preview are mirrored, so mirror the export too.
+            context.translate(x + width, y);
+            context.scale(-1, 1);
+            context.drawImage(renderedImage, 0, 0, width, height);
+            context.restore();
+          }
+
           const link = document.createElement("a");
-          link.download = "photo.png";
-          link.href = canvas.toDataURL("image/png");
+          link.download = "gunita-photo-strip.png";
+          link.href = exportCanvas.toDataURL("image/png");
           link.click();
-        });
+          adjustmentStatus.textContent = "Photo strip downloaded with all edits.";
+        } catch (error) {
+          console.error("Download error:", error);
+          adjustmentStatus.textContent = "The download could not be prepared. Please try again.";
+        } finally {
+          downloadButton.disabled = false;
+          downloadButton.textContent = "Download";
+        }
       });
      </script>
 

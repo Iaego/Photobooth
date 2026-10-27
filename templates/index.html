@@ -1,50 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gunita Studios | Online Photobooth</title>
-    <link rel="stylesheet" href="../static/css/style.css">
-
-    <!-- Bootstrap CSS-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f3f0eb">
+  <meta name="description" content="A little moment. A little forever. Make a personal photo strip with Gunita Studios, right in your browser.">
+  <title>Gunita Studios | Your private photobooth</title>
+  <link rel="stylesheet" href="../static/css/booth.css">
+  <script src="../static/js/booth.js" defer></script>
 </head>
 <body>
-
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="index.html">Gunita Studios</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-            <a class="nav-link" href="layout.html">Start booth</a>
-        </div>
-        </div>  
-    </div>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M8 5l2-2h4l2 2h4a2 2 0 0 1 2 2v12H2V7a2 2 0 0 1 2-2z"/><circle cx="12" cy="12" r="4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-7-7 7 7-7 7"/></symbol>
+    <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="14" r="8"/><path d="M9 2h6m-3 4V2m0 12 3-4M18 6l2-2"/></symbol>
+    <symbol id="i-mirror" viewBox="0 0 24 24"><path d="M12 2v3m0 3v3m0 3v3m0 3v2M3 6v12l6-6zm18 0v12l-6-6z"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
+    <symbol id="i-flash" viewBox="0 0 24 24"><path d="m13 2-9 12h7l-1 8 10-13h-8z"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 5 2c-2 1-2 2-2 3m0 3v.1"/></symbol>
+  </svg>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Gunita Studios home">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="m11 4 8 13m8-9H12m17 12-8-13m0 21-8-13M5 24h15M3 12l8 13"/></svg>
+      <span class="wordmark">gunita<span class="brand-studios">studios</span></span>
+      <span class="micro brand-caption">The online photobooth</span>
+    </a>
+    <nav aria-label="Main navigation">
+      <a class="nav-active" href="#booth" aria-current="page">The booth</a>
+      <button class="text-button" data-help>How it works</button>
+      <button class="help-button" data-help><svg class="icon"><use href="#i-help"/></svg>A little help?</button>
     </nav>
-
-<!-- Hero Page -->
-    <main class="home-hero">
-        <p class="eyebrow">Your browser, your photobooth</p>
-        <h1>Make moments worth keeping.</h1>
-        <p>Choose your photo strip, pose for the countdown, then customize and download your pictures.</p>
-        <a class="btn btn-dark btn-lg" href="layout.html">Start the photobooth</a>
-    </main>
-
-
-
-
-
-
-
+  </header>
+  <main id="booth" class="studio">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="intro-copy"><h1 id="page-title">A little moment. A little forever.</h1><p>Get close. Be yourself. Make a strip.</p></div>
+      <span class="micro session"><span class="status-dot"></span>Session 001 / Your private studio</span>
+    </section>
+    <div class="workspace">
+      <aside class="panel setup-panel" aria-labelledby="setup-title">
+        <h2 id="setup-title"><span class="step">01</span>Make it yours</h2>
+        <div class="section-label"><span class="micro">Strip style</span><span class="micro">02 styles</span></div>
+        <div class="style-options" role="group" aria-label="Strip style">
+          <button class="style-option selected" data-style="classic" aria-pressed="true"><span class="style-card"><span class="mini-strip"><img src="../media/demo/pose-1.jpg" alt=""><img src="../media/demo/pose-2.jpg" alt=""><img src="../media/demo/pose-3.jpg" alt=""><img src="../media/demo/studio.jpg" alt=""><span class="mini-brand">gunita</span><span class="mini-date">GOOD TIMES · MADE TO KEEP</span></span></span><span class="style-name"><span class="radio-dot"></span>The classic</span></button>
+          <button class="style-option" data-style="midnight" aria-pressed="false"><span class="style-card"><span class="mini-strip midnight"><img src="../media/demo/pose-1.jpg" alt=""><img src="../media/demo/pose-2.jpg" alt=""><img src="../media/demo/pose-3.jpg" alt=""><img src="../media/demo/studio.jpg" alt=""><span class="mini-brand">gunita</span><span class="mini-date">GOOD TIMES · MADE TO KEEP</span></span></span><span class="style-name"><span class="radio-dot"></span>Midnight</span></button>
+        </div>
+        <div class="setup-details">
+          <fieldset><legend class="micro">Photos per strip</legend><div class="segmented"><button data-count="3" aria-pressed="false">3 photos</button><button data-count="4" class="selected" aria-pressed="true">4 photos</button></div></fieldset>
+          <fieldset><legend class="section-label"><span class="micro">Paper color</span><span id="paper-name">Warm white</span></legend><div class="swatches">
+            <button class="swatch selected" style="--swatch:#fffaf0" data-color="#fffaf0" data-name="Warm white" aria-label="Warm white paper" aria-pressed="true"></button>
+            <button class="swatch" style="--swatch:#e8c7c0" data-color="#e8c7c0" data-name="Rose" aria-label="Rose paper" aria-pressed="false"></button>
+            <button class="swatch" style="--swatch:#c8ccba" data-color="#c8ccba" data-name="Sage" aria-label="Sage paper" aria-pressed="false"></button>
+            <button class="swatch" style="--swatch:#c3cfd9" data-color="#c3cfd9" data-name="Powder blue" aria-label="Powder blue paper" aria-pressed="false"></button>
+            <button class="swatch" style="--swatch:#292824" data-color="#292824" data-name="Ink" aria-label="Ink paper" aria-pressed="false"></button>
+          </div></fieldset>
+          <label class="toggle-row" for="print-date">Print the date<input id="print-date" type="checkbox" role="switch" checked><span class="toggle" aria-hidden="true"></span></label>
+          <p class="micro paper-note">2 × 6 inches · Made to keep</p>
+        </div>
+      </aside>
+      <section class="camera-column" aria-label="Photo studio">
+        <div class="viewfinder" id="viewfinder">
+          <div class="viewfinder-bar"><span class="micro"><span class="status-dot"></span>Live preview <span id="mode-label">/ Demo camera</span></span><div class="viewfinder-tools"><button id="mirror-button" aria-label="Mirror camera" aria-pressed="true"><svg class="icon"><use href="#i-mirror"/></svg></button><button id="fullscreen-button" aria-label="Expand camera"><svg class="icon"><use href="#i-expand"/></svg></button></div></div>
+          <div class="camera-stage">
+            <img id="demo-image" src="../media/demo/studio.jpg" alt="Demo photobooth portrait of two friends">
+            <video id="camera" autoplay muted playsinline hidden aria-label="Live camera preview"></video>
+            <span id="feeling-label" class="film-label micro">35 mm feeling / Warm</span>
+            <div class="frame-corners" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <div class="camera-caption"><p id="camera-message">One more for the memories.</p><span id="camera-progress" class="micro">Photo 04 / 04 — Make it a good one</span></div>
+            <div id="countdown" hidden aria-live="assertive"></div><div id="flash-overlay" aria-hidden="true"></div>
+          </div>
+          <div class="viewfinder-footer"><label class="source-picker"><svg class="icon"><use href="#i-camera"/></svg><select id="camera-source" aria-label="Camera source"><option value="demo">Studio camera (demo)</option><option value="camera">Use my camera</option></select></label><span id="camera-info" class="micro">Mirror on · Demo</span></div>
+        </div>
+        <div class="capture-toolbar">
+          <label class="timer-control"><svg class="icon"><use href="#i-timer"/></svg><select id="timer" aria-label="Countdown duration"><option value="3">3 sec</option><option value="5">5 sec</option><option value="0">Off</option></select></label>
+          <button class="capture-button" id="capture-button"><span class="shutter-icon" aria-hidden="true"></span><span id="capture-label">Take last photo</span><kbd>Space</kbd></button>
+          <button class="flash-button" id="flash-button" aria-pressed="false"><svg class="icon"><use href="#i-flash"/></svg><span>Flash off</span></button>
+        </div>
+        <div class="moments"><div class="section-label"><span class="micro" id="moments-label">Your moments · 3 of 4</span><span>Click a photo to retake</span></div><div class="moment-grid" id="moment-grid"></div></div>
+        <p class="studio-status" id="studio-status" role="status">Try the demo, or choose “Use my camera” to make it yours.</p>
+      </section>
+      <aside class="panel edit-panel" aria-labelledby="edit-title">
+        <h2 id="edit-title"><span class="step">03</span>A finishing touch</h2><p class="panel-description">Your light, your mood. Applied to every photo.</p>
+        <fieldset class="feeling-fieldset"><legend class="micro">Choose a feeling</legend><div class="filter-options">
+          <button data-filter="original" aria-pressed="false"><span><img src="../media/demo/pose-2.jpg" alt=""></span>Original</button>
+          <button data-filter="warm" class="selected" aria-pressed="true"><span><img class="warm-sample" src="../media/demo/studio.jpg" alt=""></span>Warm</button>
+          <button data-filter="mono" aria-pressed="false"><span><img class="mono-sample" src="../media/demo/pose-1.jpg" alt=""></span>Mono</button>
+        </div></fieldset>
+        <div class="adjustments">
+          <div class="section-label"><span class="micro">The little details</span><button class="text-button reset-button" id="reset-button">↶ Reset</button></div>
+          <label class="slider-label" for="brightness">Brightness<output for="brightness">+08</output><input id="brightness" type="range" min="-50" max="50" value="8" data-adjustment></label>
+          <label class="slider-label" for="contrast">Contrast<output for="contrast">+12</output><input id="contrast" type="range" min="-50" max="50" value="12" data-adjustment></label>
+          <label class="slider-label" for="sharpness">Sharpness<output for="sharpness">+20</output><input id="sharpness" type="range" min="0" max="100" value="20" data-adjustment></label>
+          <label class="slider-label" for="warmth">Warmth<output for="warmth">+15</output><input id="warmth" type="range" min="-50" max="50" value="15" data-adjustment></label>
+          <label class="slider-label" for="grain">Film grain<output for="grain">10</output><input id="grain" type="range" min="0" max="50" value="10" data-adjustment></label>
+          <button class="compare-button" id="compare-button">◫ <span>Hold to see original</span><kbd>O</kbd></button>
+        </div>
+        <div class="export-section"><button class="preview-button" id="preview-button"><svg class="icon"><use href="#i-arrow"/></svg>Preview your strip</button><p id="export-hint">One more photo, then it’s ready to download.</p><div class="section-label micro"><span>▧ PNG · High resolution</span><span>600 × 1800</span></div></div>
+      </aside>
+    </div>
+    <footer class="site-footer"><p>Just you and the camera. Your photos stay in your browser.</p><p class="micro">Made for the moments in between. / Gunita Studios</p></footer>
+  </main>
+  <dialog id="help-dialog" class="help-dialog" aria-label="How to use the photobooth"><button class="dialog-close" aria-label="Close help" data-close>×</button><span class="micro">Your own little studio</span><h2>A few seconds.<br>A memory to keep.</h2><ol><li><strong>Make it yours.</strong> Pick your paper, strip style, and photo count.</li><li><strong>Find your good side.</strong> Choose “Use my camera,” allow access, and take each photo. The demo lets you try everything first.</li><li><strong>Add a little feeling.</strong> Adjust your photos, click a moment to retake it, then preview and download your strip.</li></ol><p>Camera access needs localhost or HTTPS. Photos are processed on your device and aren’t uploaded.</p><button class="preview-button" data-close>Let’s make a memory <svg class="icon"><use href="#i-arrow"/></svg></button></dialog>
+  <dialog id="preview-dialog" class="preview-dialog" aria-label="Photo strip preview"><button class="dialog-close" aria-label="Close strip preview" data-close>×</button><div><span class="micro" id="preview-kind">Your little keepsake</span><h2>Made to remember.</h2><p id="preview-note">A little moment, all yours.</p><button class="capture-button" id="download-button">Download PNG <svg class="icon"><use href="#i-arrow"/></svg></button><button class="preview-button" data-close>Back to the booth</button></div><img id="strip-preview" alt="Your finished photo strip"></dialog>
 </body>
-
 </html>
